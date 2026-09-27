@@ -288,6 +288,10 @@ Contributions are welcome. Please see [CONTRIBUTING.md](CONTRIBUTING.md) for gui
 - To add new threat detection patterns, see [docs/THREAT_PATTERNS.md](docs/THREAT_PATTERNS.md)
 - All PRs must pass the existing test suite (`npm run test:build`)
 
+## Publisher
+
+The npm package is published under the legacy scope `@stranzwersweb2` — this is the same author as the GitHub owner [`adityasugandhi`](https://github.com/adityasugandhi). Both identities belong to Aditya Sugandhi.
+
 ## Author
 
 **Aditya Sugandhi** -- [adityasugandhi.com](https://adityasugandhi.com) | [GitHub](https://github.com/adityasugandhi)
