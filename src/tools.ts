@@ -88,6 +88,7 @@ export function registerTools(server: McpServer): void {
       limit: z.number().min(1).max(100).default(20).describe("Max results (default 20)"),
       sortBy: z.enum(["stars", "recent"]).default("recent").describe("Sort order"),
     },
+    { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
     async ({ query, limit, sortBy }) => {
       try {
         const result = await searchSkills(query, limit, sortBy);
@@ -111,6 +112,7 @@ export function registerTools(server: McpServer): void {
       query: z.string().min(1).max(200).describe("Natural language search query"),
       limit: z.number().min(1).max(50).default(10).describe("Max results (default 10)"),
     },
+    { readOnlyHint: true, destructiveHint: false, idempotentHint: false, openWorldHint: true },
     async ({ query, limit }) => {
       try {
         const result = await aiSearchSkills(query, limit);
@@ -133,6 +135,7 @@ export function registerTools(server: McpServer): void {
     {
       githubUrl: z.string().url().describe("GitHub URL (https://github.com/user/repo/tree/branch/path)"),
     },
+    { readOnlyHint: true, destructiveHint: false, idempotentHint: false, openWorldHint: true },
     async ({ githubUrl }) => {
       try {
         const result = await fetchAndScanSkill(githubUrl);
@@ -192,6 +195,7 @@ export function registerTools(server: McpServer): void {
       scanTop: z.number().min(1).max(5).default(3).describe("How many top results to security-scan (default 3)"),
       sortBy: z.enum(["stars", "recent"]).default("recent").describe("Sort order"),
     },
+    { readOnlyHint: true, destructiveHint: false, idempotentHint: false, openWorldHint: true },
     async ({ query, limit, scanTop, sortBy }) => {
       try {
         const result = await searchSkills(query, limit, sortBy);
@@ -264,6 +268,7 @@ export function registerTools(server: McpServer): void {
       force: z.boolean().default(false).describe("Force install: skip medium/high risk block, overwrite existing"),
       scope: scopeParam,
     },
+    { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
     async ({ githubUrl, name, force, scope }) => {
       try {
         const result = await installSkill(githubUrl, name, force, scope as SkillScope);
@@ -316,6 +321,7 @@ export function registerTools(server: McpServer): void {
       name: z.string().min(1).max(64).describe("Name of the skill directory to remove"),
       scope: scopeParam,
     },
+    { readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: false },
     async ({ name, scope }) => {
       try {
         const result = await uninstallSkill(name, scope as SkillScope);
@@ -341,6 +347,7 @@ export function registerTools(server: McpServer): void {
       refresh: z.boolean().default(false).describe("Force re-sync before listing (re-scans all skills)"),
       scope: scopeParamAll,
     },
+    { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     async ({ refresh, scope }) => {
       try {
         const scopes: SkillScope[] = scope === "all" ? ["global", "project"] : [scope as SkillScope];
@@ -439,6 +446,7 @@ export function registerTools(server: McpServer): void {
       name: z.string().min(1).max(64).describe("Name of the installed skill to audit"),
       scope: scopeParam,
     },
+    { readOnlyHint: true, destructiveHint: false, idempotentHint: false, openWorldHint: false },
     async ({ name, scope }) => {
       try {
         const mgr = getSkillManager(scope as SkillScope);
@@ -499,6 +507,7 @@ export function registerTools(server: McpServer): void {
       enabled: z.boolean().optional().describe("Enable/disable sync engine (action=set)"),
       scope: scopeParam,
     },
+    { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
     async ({ action, query, authors, tags, limit, sortBy, subscriptionId, syncIntervalHours, maxRiskLevel, conflictPolicy, autoRemove, enabled, scope }) => {
       try {
         const paths = resolvePaths(scope as SkillScope);
@@ -605,6 +614,7 @@ export function registerTools(server: McpServer): void {
       dryRun: z.boolean().default(false).describe("Preview changes without executing (default false)"),
       scope: scopeParam,
     },
+    { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
     async ({ dryRun, scope }) => {
       try {
         const engine = getSyncEngine(scope as SkillScope);
@@ -654,6 +664,7 @@ export function registerTools(server: McpServer): void {
     {
       scope: scopeParamAll,
     },
+    { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     async ({ scope }) => {
       try {
         const scopes: SkillScope[] = scope === "all" ? ["global", "project"] : [scope as SkillScope];
@@ -724,6 +735,7 @@ export function registerTools(server: McpServer): void {
       limit: z.number().min(1).max(20).default(5).describe("Max suggestions (default 5)"),
       scope: scopeParam,
     },
+    { readOnlyHint: true, destructiveHint: false, idempotentHint: false, openWorldHint: true },
     async ({ context, limit, scope }) => {
       try {
         await ensureManagerInitialized(scope as SkillScope);
@@ -786,6 +798,7 @@ export function registerTools(server: McpServer): void {
       skillB: z.string().min(1).max(200).describe("GitHub URL or installed skill name for second skill"),
       scope: scopeParam,
     },
+    { readOnlyHint: true, destructiveHint: false, idempotentHint: false, openWorldHint: true },
     async ({ skillA, skillB, scope }) => {
       try {
         await ensureManagerInitialized(scope as SkillScope);

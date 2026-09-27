@@ -20,8 +20,8 @@
     "dev": "tsx watch src/index.ts",
     "start": "node build/index.js",
     "prepublishOnly": "npm run build",
-    "test": "node --test src/__tests__/security-scanner.test.ts src/__tests__/skill-manager.test.ts src/__tests__/sync-engine.test.ts src/__tests__/scope-resolver.test.ts",
-    "test:build": "tsc && node --test build/__tests__/security-scanner.test.js build/__tests__/skill-manager.test.js build/__tests__/sync-engine.test.js build/__tests__/scope-resolver.test.js"
+    "test": "node --test src/__tests__/security-scanner.test.ts src/__tests__/skill-manager.test.ts src/__tests__/sync-engine.test.ts src/__tests__/scope-resolver.test.ts src/__tests__/tools.test.ts",
+    "test:build": "tsc && node --test build/__tests__/security-scanner.test.js build/__tests__/skill-manager.test.js build/__tests__/sync-engine.test.js build/__tests__/scope-resolver.test.js build/__tests__/tools.test.js"
   },
   "keywords": [
     "mcp",
