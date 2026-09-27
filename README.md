@@ -6,7 +6,7 @@
 [![MCP Compatible](https://img.shields.io/badge/MCP-Compatible-green.svg)](https://modelcontextprotocol.io)
 [![Node.js >= 20](https://img.shields.io/badge/Node.js-%3E%3D20-brightgreen.svg)](https://nodejs.org)
 [![Security Patterns](https://img.shields.io/badge/Threat_Patterns-60%2B-red.svg)](#security-model)
-[![M8ven Verified](https://m8ven.ai/badge/mcp/adityasugandhi-skillsync-mcp-17dveq?variant=verified&v=61d249d31176de57c08895bccfe1c0f2)](https://m8ven.ai/mcp/adityasugandhi-skillsync-mcp-17dveq)
+[![M8ven Score](https://m8ven.ai/badge/mcp/adityasugandhi-skillsync-mcp-k28u2v)](https://m8ven.ai/mcp/adityasugandhi-skillsync-mcp-k28u2v)
 
 **[Website](https://skillsync.js.org)** | **[Smithery](https://smithery.ai/servers/adityasugandhi/skillsync-mcp)** | **[npm](https://www.npmjs.com/package/@stranzwersweb2/skillsync-mcp)** | **[GitHub](https://github.com/adityasugandhi/skillsync-mcp)**
 
