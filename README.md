@@ -1,7 +1,7 @@
 # SkillSync MCP
 
 [![npm version](https://img.shields.io/npm/v/@stranzwersweb2/skillsync-mcp)](https://www.npmjs.com/package/@stranzwersweb2/skillsync-mcp)
-[![Smithery](https://smithery.ai/badge/adityasugandhi/skillsync-mcp)](https://smithery.ai/servers/adityasugandhi/skillsync-mcp)
+[![LightNow capabilities](https://lightnow.ai/badge/io.github.adityasugandhi/skillsync-mcp)](https://lightnow.ai/servers/io.github.adityasugandhi/skillsync-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![MCP Compatible](https://img.shields.io/badge/MCP-Compatible-green.svg)](https://modelcontextprotocol.io)
 [![Node.js >= 20](https://img.shields.io/badge/Node.js-%3E%3D20-brightgreen.svg)](https://nodejs.org)
@@ -62,7 +62,7 @@ An MCP (Model Context Protocol) server for [SkillsMP](https://skillsmp.com) -- t
 
 ### Smithery (one-click)
 
-[![Smithery](https://smithery.ai/badge/adityasugandhi/skillsync-mcp)](https://smithery.ai/servers/adityasugandhi/skillsync-mcp)
+[![LightNow capabilities](https://lightnow.ai/badge/io.github.adityasugandhi/skillsync-mcp)](https://lightnow.ai/servers/io.github.adityasugandhi/skillsync-mcp)
 
 Install via [Smithery](https://smithery.ai/servers/adityasugandhi/skillsync-mcp) for automatic configuration with any supported client.
 
