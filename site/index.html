@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SkillSync MCP &mdash; Security-Gated Skill Management for Claude Code</title>
-  <meta name="description" content="An MCP server that runs a regex-based security scan before installing a skill and blocks critical matches. 101 threat patterns, 13 tools, config docs for 7 clients. Search, scan, install, and sync Claude Code skills.">
+  <meta name="description" content="Scan community skills before you install them: SkillSync checks GitHub skill repos against 101 regex threat patterns and blocks critical matches. A pattern check, not a guarantee. 13 tools, setup guides for 7 MCP clients.">
   <meta name="keywords" content="MCP, Model Context Protocol, Claude Code, skills, security scanner, prompt injection, AI tools, OpenClaw, Cursor, Windsurf, GitHub Copilot, Zed, nanobot">
   <meta name="author" content="Aditya Sugandhi">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -13,13 +13,13 @@
   <!-- AI / LLM discovery -->
   <link rel="alternate" type="text/plain" href="llms.txt" title="LLM-friendly site summary">
   <link rel="alternate" type="text/plain" href="llms-full.txt" title="LLM-friendly full reference">
-  <meta name="ai-content-declaration" content="This page describes SkillSync MCP, a security-gated skill management MCP server for Claude Code with a rule-based scanner of 101 regex threat patterns, 13 tools, and config docs for 7 clients. An experimental ML detector is research only and is not part of the shipped package.">
+  <meta name="ai-content-declaration" content="This page describes SkillSync MCP, a security-gated skill management MCP server for Claude Code with a rule-based scanner of 101 regex threat patterns, 13 tools, and setup guides for 7 clients. An experimental ML detector is research only and is not part of the shipped package.">
   <link rel="alternate" type="text/html" href="research.html" title="Research results (experimental)">
 
   <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="SkillSync MCP &mdash; Security-Gated Skill Management for Claude Code">
-  <meta property="og:description" content="Regex-based security scan before skill installation; critical matches are blocked. 101 threat patterns, 13 tools, 7 client configs.">
+  <meta property="og:description" content="Scan community skills before install: 101 regex threat patterns; critical matches blocked; warnings shown for review. 13 MCP tools, setup guides for 7 clients.">
   <meta property="og:url" content="https://skillsync.js.org/">
   <meta property="og:site_name" content="SkillSync MCP">
   <meta property="og:locale" content="en_US">
@@ -27,7 +27,7 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="SkillSync MCP &mdash; Security-Gated Skill Management for Claude Code">
-  <meta name="twitter:description" content="Regex-based security scan before skill installation; critical matches are blocked. 101 threat patterns, 13 tools, 7 client configs.">
+  <meta name="twitter:description" content="Scan community skills before install: 101 regex threat patterns; critical matches blocked; warnings shown for review. 13 MCP tools, setup guides for 7 clients.">
   <meta name="twitter:creator" content="@adityasugandhi">
 
   <!-- Favicon -->
@@ -79,8 +79,8 @@
       "SSRF prevention (github.com sources only)",
       "Content hashing and TOCTOU verification",
       "Query subscriptions synced from the SkillsMP API (local config)",
-      "Semantic search via the third-party SkillsMP API",
-      "Config docs for 7 MCP clients"
+      "Keyword search via the third-party SkillsMP API",
+      "Setup guides for 7 MCP clients"
     ]
   }
   </script>
@@ -93,8 +93,7 @@
   <input type="checkbox" id="nav-toggle">
   <label for="nav-toggle" class="nav-hamburger" aria-label="Toggle navigation">&#9776;</label>
   <ul>
-    <li><a href="#features">Features</a></li>
-    <li><a href="#tools">Tools</a></li>
+    <li><a href="#workflow">How it works</a></li>
     <li><a href="#install">Install</a></li>
     <li><a href="#security">Security</a></li>
     <li><a href="research.html">Research</a></li>
@@ -108,9 +107,9 @@
 <!-- ─── Hero ─────────────────────────────────────────────────────────────── -->
 <section class="hero" id="hero">
   <div class="container">
-    <h1>Security-Gated Skill Management for AI Coding Assistants</h1>
-    <p class="hero-subtitle"><strong>Every skill is scanned against 101 regex threat patterns before it installs; critical matches are blocked.</strong></p>
-    <p class="hero-stats">101 regex threat patterns &middot; 13 MCP tools &middot; config docs for 7 clients</p>
+    <h1>Scan community skills<br>before you install them.</h1>
+    <p class="hero-subtitle"><strong>SkillSync checks a GitHub skill repo against 101 regex threat patterns before install. Critical matches are blocked; warnings are shown for you to review.</strong> It is a pattern check, not a guarantee &mdash; unknown or obfuscated threats can still pass.</p>
+    <p class="hero-stats">101 regex threat patterns &middot; 13 MCP tools &middot; setup guides for 7 clients</p>
 
     <div class="hero-install">
       <pre><code id="install-cmd">npx -y @stranzwersweb2/skillsync-mcp</code></pre>
@@ -118,26 +117,87 @@
     </div>
 
     <div class="hero-cta">
-      <a href="https://www.npmjs.com/package/@stranzwersweb2/skillsync-mcp" class="btn btn-primary" target="_blank" rel="noopener">npm</a>
+      <a href="#install" class="btn btn-primary">Get started</a>
       <a href="https://github.com/adityasugandhi/skillsync-mcp" class="btn btn-outline" target="_blank" rel="noopener">GitHub</a>
     </div>
   </div>
 </section>
 
-<!-- ─── Research Highlight (experimental, not shipped) ───────────────────── -->
-<section class="research-highlight" id="research" aria-labelledby="research-title">
+<!-- ─── How it works ─────────────────────────────────────────────────────── -->
+<section id="workflow">
   <div class="container">
-    <article class="research-card">
-      <p class="research-label"><span class="badge badge-warning">Research &middot; Experimental &middot; Synthetic data</span></p>
-      <h2 id="research-title">Experimental detector: 99.2% attack detection on Boundary Pairs synthetic test data</h2>
-      <p class="research-lead">Experimental detector: 99.2% attack detection on Boundary Pairs synthetic test data, in each of three training runs (119/120 attacks each). Average benign false-alarm rate 3.9% (per-run 2.5%, 4.2%, 5.0%). 10 held-out scenarios from one synthetic generator; not evidence of real-world protection. Shipped rule-based scanner is separate.</p>
-      <ul class="research-facts">
-        <li>Fine-tuned DeBERTa-v3-base classifier; the unmodified base model caught 31/120 attacks with 4 false alarms on the same test set.</li>
-        <li>Benign false alarms: 3, 5 and 6 of 120 across the three runs. With 120 benign examples, a low false-alarm rate cannot be certified.</li>
-        <li>Not included in the npm package and not used by the install gate.</li>
-      </ul>
-      <p class="research-links"><a href="research.html" class="btn btn-primary">Methods &amp; full results</a> <a href="https://github.com/adityasugandhi/skillsync-mcp/tree/main/docs/research" class="btn btn-outline" target="_blank" rel="noopener">Research docs on GitHub</a></p>
-    </article>
+    <p class="section-label">How it works</p>
+    <h2>From &ldquo;I need a skill&rdquo; to a scanned install</h2>
+    <p>Example task: you want Claude Code to help with your Git workflow. You ask in plain language; SkillSync's MCP tools search, scan and install from inside the assistant. No dashboard, no new login.</p>
+    <p class="section-note">Terminal blocks are illustrative. Tool names are real; outputs depend on the skill and the SkillsMP API response.</p>
+    <div class="grid grid-2">
+
+      <article class="card workflow-card">
+        <div class="step-header">
+          <span class="step-num" aria-hidden="true">1</span>
+          <h3>Find candidates</h3>
+        </div>
+        <p>Search the SkillsMP community marketplace without leaving your assistant. No API key needed to start (anonymous keyword search; SkillsMP limit: 50&thinsp;req/day).</p>
+        <div class="terminal-demo" aria-label="Illustrative terminal example">
+          <div class="t-label">You &rarr; skillsmp_search</div>
+          <div class="t-input">find skills that help with my git workflow</div>
+          <div class="t-output">Found 12 results: git-flow-helper, branch-manager&hellip; <em>(illustrative)</em></div>
+        </div>
+      </article>
+
+      <article class="card workflow-card">
+        <div class="step-header">
+          <span class="step-num" aria-hidden="true">2</span>
+          <h3>Scan before you install</h3>
+        </div>
+        <p>SkillSync fetches the repo's files from GitHub and runs all 101 patterns locally. You see the report before anything is installed. Max 50 files, 512&thinsp;KB per file, 2&thinsp;MB total.</p>
+        <div class="terminal-demo" aria-label="Illustrative terminal example">
+          <div class="t-label">You &rarr; skillsmp_scan_skill</div>
+          <div class="t-input">scan github.com/user/git-flow-helper</div>
+          <div class="t-output t-safe">&#10003; 101 patterns checked &middot; Risk: Low &middot; 2 warnings <em>(illustrative)</em></div>
+        </div>
+      </article>
+
+      <article class="card workflow-card">
+        <div class="step-header">
+          <span class="step-num" aria-hidden="true">3</span>
+          <h3>Review the findings</h3>
+        </div>
+        <p>Each match shows the file, line and category. Critical matches are blocked with no override. Medium/high risk needs an explicit <code>force=true</code>. Low-risk results still list their warnings &mdash; read them before you install.</p>
+        <div class="terminal-demo" aria-label="Illustrative blocked example">
+          <div class="t-label">Blocked example</div>
+          <div class="t-blocked">&#10007; BLOCKED &mdash; prompt-injection (critical)</div>
+          <div class="t-output">Line 42: &ldquo;Ignore previous instructions&hellip;&rdquo; <em>(illustrative)</em></div>
+        </div>
+      </article>
+
+      <article class="card workflow-card">
+        <div class="step-header">
+          <span class="step-num" aria-hidden="true">4</span>
+          <h3>Install, then use it</h3>
+        </div>
+        <p>Skills that pass the configured checks install to <code>~/.claude/skills/</code> (dependencies via <code>npm install --ignore-scripts</code>; content hash re-checked at install). Claude Code loads the skill in your next session, so your Git help is there for the rest of your coding work.</p>
+        <div class="terminal-demo" aria-label="Illustrative install example">
+          <div class="t-label">You &rarr; skillsmp_install_skill</div>
+          <div class="t-safe">&#10003; Installed &mdash; git-flow-helper</div>
+          <div class="t-output">~/.claude/skills/git-flow-helper/ <em>(illustrative)</em></div>
+        </div>
+      </article>
+
+    </div>
+
+    <p class="callout"><strong>Later:</strong> <code>skillsmp_list_installed</code> shows what you have, <code>skillsmp_audit_installed</code> re-scans one skill, and <code>skillsync_sync_now</code> with <code>dryRun=true</code> previews what a subscription sync would change before it changes anything.</p>
+
+    <h3>Where your data goes</h3>
+    <ol class="flow" aria-label="SkillSync data flow">
+      <li class="flow-step"><strong>Your assistant</strong>Claude Code or another MCP client calls a SkillSync tool.</li>
+      <li class="flow-step flow-step-local"><strong>SkillSync MCP (local)</strong>Runs on your machine via <code>npx</code>. No SkillSync cloud.</li>
+      <li class="flow-step"><strong>SkillsMP API (third party)</strong>Receives search queries and your API key if set. Suggestions also send up to 10 installed skill names.</li>
+      <li class="flow-step"><strong>GitHub</strong>Skill source files are fetched from <code>github.com</code> only.</li>
+      <li class="flow-step flow-step-local"><strong>Regex gate (local)</strong>101 patterns run on your machine and decide block / warn / allow.</li>
+      <li class="flow-step flow-step-local"><strong><code>~/.claude/skills/</code></strong>Where passing skills are written.</li>
+    </ol>
+    <p class="section-note">The experimental ML detector described under Research is not part of this flow: it is not shipped, not downloaded, and not used by the install gate.</p>
   </div>
 </section>
 
@@ -184,12 +244,12 @@
           <tr>
             <td>Multi-client support</td>
             <td>N/A</td>
-            <td class="highlight-col"><span class="badge badge-success">Config docs for 7 clients</span></td>
+            <td class="highlight-col"><span class="badge badge-success">Setup guides for 7 clients (docs-checked)</span></td>
           </tr>
           <tr>
             <td>Marketplace search</td>
             <td>Manual</td>
-            <td class="highlight-col"><span class="badge badge-success">Keyword + semantic (SkillsMP API)</span></td>
+            <td class="highlight-col"><span class="badge badge-success">Keyword search (SkillsMP API); semantic search implemented, upstream availability may vary</span></td>
           </tr>
           <tr>
             <td>Query subscriptions</td>
@@ -227,7 +287,7 @@
       </article>
       <article class="card">
         <h3>Marketplace Search</h3>
-        <p>Keyword and semantic search across the SkillsMP marketplace through the third-party SkillsMP API (SkillsMP states its semantic search uses Cloudflare AI; the model is not disclosed). Search queries, and an API key if you set one, are sent to skillsmp.com; suggestions also send the names of up to 10 installed skills and your optional context. Results are untrusted third-party content. Suggestions based on your installed skills and side-by-side comparison with security diffs.</p>
+        <p>Keyword search across the SkillsMP marketplace through the third-party SkillsMP API. Semantic search is implemented in SkillSync; upstream availability is not verified. Search queries and an API key (if set) are sent to skillsmp.com; suggestions also send up to 10 installed skill names and optional context. Results are untrusted third-party content.</p>
       </article>
       <article class="card">
         <h3>Skill Management</h3>
@@ -249,7 +309,7 @@
     </details>
     <details name="tools">
       <summary><code>skillsmp_ai_search</code> &mdash; AI Semantic Search</summary>
-      <p>Natural language search through the SkillsMP ai-search API (hosted by SkillsMP; it states it uses Cloudflare AI). Returns relevance-scored results that are treated as untrusted content.</p>
+      <p>Natural language search through the SkillsMP ai-search API hosted by SkillsMP. Implemented in SkillSync; upstream availability is not verified. Returns relevance-scored results that are treated as untrusted content.</p>
     </details>
     <details name="tools">
       <summary><code>skillsmp_search_safe</code> &mdash; Search + Auto-Scan</summary>
@@ -257,7 +317,7 @@
     </details>
     <details name="tools">
       <summary><code>skillsmp_suggest</code> &mdash; AI Suggestions</summary>
-      <p>Recommends new skills based on what you already have installed and optional context about your current project. Filters out already-installed skills automatically. Privacy note: the query sent to SkillsMP includes the names of up to 10 of your installed skills and your optional context (up to 200 characters).</p>
+      <p>Recommends new skills based on what you already have installed and optional context about your current project. Filters out already-installed skills automatically. Depends on upstream SkillsMP API availability. Privacy note: the query sent to SkillsMP includes the names of up to 10 of your installed skills and your optional context (up to 200 characters).</p>
     </details>
 
     <h3>Security</h3>
@@ -295,7 +355,7 @@
     </details>
     <details name="tools">
       <summary><code>skillsync_sync_now</code> &mdash; Run Sync</summary>
-      <p>Polls subscriptions, diffs against installed skills, and installs/updates/removes as needed. Supports <code>dryRun=true</code> to preview changes before applying.</p>
+      <p>Polls subscriptions, diffs against installed skills, and installs/updates/removes as needed. Supports <code>dryRun=true</code> to preview changes before applying. Run a dry-run first before enabling automatic sync.</p>
     </details>
     <details name="tools">
       <summary><code>skillsync_status</code> &mdash; Sync Status</summary>
@@ -308,11 +368,14 @@
 <section id="install">
   <div class="container">
     <h2>Quick Start</h2>
-    <p>Add SkillSync to your MCP client configuration:</p>
+    <p>Node 20+ required. No API key needed to get started &mdash; keyword search runs anonymously (SkillsMP limit: 50&thinsp;req/day). An optional <code>SKILLSMP_API_KEY</code> env var gives account-based access (third-party terms apply).</p>
+    <p class="section-note">Setup guides follow each client's current official documentation. They are docs-checked, not runtime-tested in every client. Only Claude Code loads the installed skills natively; in other clients SkillSync provides the search, scan and management tools.</p>
 
     <details name="install" open>
       <summary>Claude Code</summary>
-      <p>Add to <code>~/.claude/settings.json</code>:</p>
+      <p>Add the server for your user (all projects):</p>
+      <pre><code>claude mcp add --transport stdio --scope user skillsmp -- npx -y @stranzwersweb2/skillsync-mcp</code></pre>
+      <p>Or share it with a project by adding <code>.mcp.json</code> at the project root (Claude Code asks you to approve project servers the first time):</p>
       <pre><code>{
   "mcpServers": {
     "skillsmp": {
@@ -321,27 +384,28 @@
     }
   }
 }</code></pre>
+      <p>Check it: run <code>claude mcp get skillsmp</code>, or type <code>/mcp</code> inside Claude Code. Installed skills go to <code>~/.claude/skills/</code> and load in your next session.</p>
     </details>
 
     <details name="install">
       <summary>OpenClaw</summary>
-      <p>Add to <code>~/.openclaw/mcp.json</code>:</p>
+      <p>Easiest: Control UI &rarr; Settings &rarr; MCP &rarr; Add server &rarr; Stdio, command <code>npx</code>, args <code>-y @stranzwersweb2/skillsync-mcp@1.4.1</code>. Or in the OpenClaw config:</p>
       <pre><code>{
-  "mcpServers": {
-    "skillsmp": {
-      "version": "1.4.1",
-      "autoUpdate": false,
-      "command": "npx",
-      "args": ["-y", "@stranzwersweb2/skillsync-mcp@1.4.1"]
+  "mcp": {
+    "servers": {
+      "skillsmp": {
+        "command": "npx",
+        "args": ["-y", "@stranzwersweb2/skillsync-mcp@1.4.1"]
+      }
     }
   }
 }</code></pre>
-      <p><small>OpenClaw uses the same SKILL.md format as Claude Code. Pin versions and review tool policies per the security hardening guide.</small></p>
+      <p>Check it: <code>openclaw mcp doctor skillsmp --probe</code>. SkillSync still installs skills to <code>~/.claude/skills/</code>; OpenClaw gets the MCP tools.</p>
     </details>
 
     <details name="install">
       <summary>Cursor</summary>
-      <p>Add to <code>.cursor/mcp.json</code> in your project root:</p>
+      <p>Add to <code>.cursor/mcp.json</code> in your project, or <code>~/.cursor/mcp.json</code> for all projects:</p>
       <pre><code>{
   "mcpServers": {
     "skillsmp": {
@@ -350,11 +414,12 @@
     }
   }
 }</code></pre>
+      <p>Save, restart Cursor, then check Customize &rarr; MCPs.</p>
     </details>
 
     <details name="install">
       <summary>Windsurf</summary>
-      <p>Add to <code>~/.windsurf/mcp.json</code>:</p>
+      <p>In Cascade, open the MCP menu and choose the option to open the MCP config file (<code>mcp_config.json</code>; the editor's legacy location is <code>~/.codeium/windsurf/mcp_config.json</code>). Add:</p>
       <pre><code>{
   "mcpServers": {
     "skillsmp": {
@@ -363,54 +428,79 @@
     }
   }
 }</code></pre>
+      <p>Refresh the MCP list after saving.</p>
     </details>
 
     <details name="install">
-      <summary>GitHub Copilot</summary>
-      <p>Add to <code>.github/copilot-mcp.json</code> in your project root, or <code>~/.github/copilot-mcp.json</code> for global:</p>
+      <summary>GitHub Copilot (VS Code)</summary>
+      <p>Add <code>.vscode/mcp.json</code> to your project:</p>
       <pre><code>{
-  "mcpServers": {
+  "servers": {
     "skillsync": {
       "command": "npx",
-      "args": ["-y", "@stranzwersweb2/skillsync-mcp"],
-      "env": {
-        "SKILLSMP_API_KEY": "your-api-key"
-      }
+      "args": ["-y", "@stranzwersweb2/skillsync-mcp"]
     }
   }
 }</code></pre>
+      <p>Start it from the Command Palette with <em>MCP: List Servers</em>, then use Copilot Chat in Agent mode.</p>
     </details>
 
     <details name="install">
       <summary>Zed</summary>
-      <p>Add to <code>~/.config/zed/settings.json</code> under <code>"context_servers"</code>:</p>
+      <p>Settings &rarr; AI &rarr; MCP Servers &rarr; Add Local Server, or add to <code>~/.config/zed/settings.json</code>:</p>
       <pre><code>{
   "context_servers": {
     "skillsync": {
-      "command": {
-        "path": "npx",
-        "args": ["-y", "@stranzwersweb2/skillsync-mcp"],
-        "env": {
-          "SKILLSMP_API_KEY": "your-api-key"
-        }
+      "command": "npx",
+      "args": ["-y", "@stranzwersweb2/skillsync-mcp"]
+    }
+  }
+}</code></pre>
+      <p>The server's indicator should turn green when it is active. An optional <code>"env"</code> object can sit next to <code>"args"</code>.</p>
+    </details>
+
+    <details name="install">
+      <summary>nanobot</summary>
+      <p>Add to <code>~/.nanobot/config.json</code> (or use Apps &rarr; MCP &rarr; custom stdio server):</p>
+      <pre><code>{
+  "tools": {
+    "mcpServers": {
+      "skillsync": {
+        "command": "npx",
+        "args": ["-y", "@stranzwersweb2/skillsync-mcp"]
       }
     }
   }
 }</code></pre>
+      <p>Restart when prompted, then ask for the <code>skillsync</code> server by name to test it.</p>
     </details>
 
     <details name="install">
-      <summary>Global Install (npm)</summary>
+      <summary>Global npm install (optional, any client)</summary>
       <pre><code>npm install -g @stranzwersweb2/skillsync-mcp</code></pre>
-      <p>Then reference <code>skillsync-mcp</code> as the command in any MCP config:</p>
-      <pre><code>{
-  "mcpServers": {
-    "skillsmp": {
-      "command": "skillsync-mcp"
-    }
-  }
-}</code></pre>
+      <p>Then use <code>skillsync-mcp</code> as the command (no args) in any of the configs above instead of <code>npx</code>.</p>
     </details>
+
+    <h3>Try these prompts</h3>
+    <p class="section-note">Prompts are illustrative &mdash; actual output depends on the skill and SkillsMP API response.</p>
+    <div class="prompt-examples">
+      <div class="prompt-example">
+        <div class="prompt-label">Search &middot; skillsmp_search</div>
+        <code>find skills that help with my git workflow</code>
+      </div>
+      <div class="prompt-example">
+        <div class="prompt-label">Scan before install &middot; skillsmp_scan_skill</div>
+        <code>scan github.com/user/skill-repo before I install it</code>
+      </div>
+      <div class="prompt-example">
+        <div class="prompt-label">Audit one installed skill &middot; skillsmp_audit_installed</div>
+        <code>re-scan my git-flow-helper skill and show the findings</code>
+      </div>
+      <div class="prompt-example">
+        <div class="prompt-label">Subscription sync preview &middot; skillsync_sync_now dryRun=true</div>
+        <code>show me what sync would change before I enable automatic sync</code>
+      </div>
+    </div>
 
     <h3>Client Compatibility</h3>
     <div class="table-wrap">
@@ -418,18 +508,18 @@
         <thead>
           <tr>
             <th>Client</th>
-            <th>Config Path</th>
-            <th>Skill Format</th>
+            <th>Where to configure</th>
+            <th>What you get</th>
           </tr>
         </thead>
         <tbody>
-          <tr><td>Claude Code</td><td><code>~/.claude/settings.json</code></td><td>SKILL.md in <code>~/.claude/skills/</code></td></tr>
-          <tr><td>OpenClaw</td><td><code>~/.openclaw/mcp.json</code></td><td>SKILL.md (same format)</td></tr>
-          <tr><td>Cursor</td><td><code>.cursor/mcp.json</code></td><td>MCP tools only</td></tr>
-          <tr><td>Windsurf</td><td><code>~/.windsurf/mcp.json</code></td><td>MCP tools only</td></tr>
-          <tr><td>GitHub Copilot</td><td><code>.github/copilot-mcp.json</code></td><td>MCP tools only</td></tr>
-          <tr><td>Zed</td><td><code>~/.config/zed/settings.json</code></td><td>MCP tools only</td></tr>
-          <tr><td>nanobot</td><td>MCP config</td><td>MCP tools only</td></tr>
+          <tr><td>Claude Code</td><td><code>claude mcp add</code> (user) or <code>.mcp.json</code> (project)</td><td>MCP tools + native skill loading from <code>~/.claude/skills/</code></td></tr>
+          <tr><td>OpenClaw</td><td>Control UI &rarr; MCP, or <code>mcp.servers</code> in config</td><td>MCP tools</td></tr>
+          <tr><td>Cursor</td><td><code>.cursor/mcp.json</code> or <code>~/.cursor/mcp.json</code></td><td>MCP tools</td></tr>
+          <tr><td>Windsurf</td><td>Cascade MCP menu &rarr; <code>mcp_config.json</code></td><td>MCP tools</td></tr>
+          <tr><td>GitHub Copilot (VS Code)</td><td><code>.vscode/mcp.json</code> (<code>servers</code>)</td><td>MCP tools</td></tr>
+          <tr><td>Zed</td><td><code>context_servers</code> in <code>~/.config/zed/settings.json</code></td><td>MCP tools</td></tr>
+          <tr><td>nanobot</td><td><code>tools.mcpServers</code> in <code>~/.nanobot/config.json</code></td><td>MCP tools</td></tr>
         </tbody>
       </table>
     </div>
@@ -504,6 +594,130 @@
       <li>15-minute scan cache with 100-entry LRU eviction</li>
       <li>fs.watch startup verification with debounced re-scanning</li>
     </ul>
+  </div>
+</section>
+
+<!-- ─── Research Highlight (experimental, not shipped) ───────────────────── -->
+<section class="research-highlight" id="research" aria-labelledby="research-title">
+  <div class="container">
+    <article class="research-card">
+      <p class="research-label"><span class="badge badge-warning">Research &middot; Experimental &middot; Synthetic data</span></p>
+      <h2 id="research-title">Experimental detector: not part of the shipped package</h2>
+      <p class="research-lead">A fine-tuned DeBERTa-v3-base classifier was evaluated offline on the Boundary Pairs synthetic dataset. 99.2% attack detection in each of three training runs (119/120 each); average benign false-alarm rate 3.9% (per-run 2.5%, 4.2%, 5.0%). 10 held-out scenarios from one synthetic generator; not evidence of real-world protection. The shipped install gate uses the rule-based scanner; this model is not installed, not downloaded at runtime, and not used by the install gate.</p>
+
+      <h3>Test results on Boundary Pairs synthetic data</h3>
+      <div class="grid grid-2">
+
+        <div class="card">
+          <h4 class="chart-title">Attack detection <small class="chart-sub">(higher is better)</small></h4>
+          <p class="chart-desc">120 attack texts &middot; Boundary Pairs synthetic test set</p>
+          <div class="bar-chart" role="img" aria-label="Bar chart showing attack detection: Base model 25.8%, Fine-tuned BP1 mean 99.2%, Phrase-list baseline 58.3%, Length baseline 85.0%">
+            <div class="bar-row">
+              <div class="bar-row-header">
+                <span class="bar-label">Base model (P0, unmodified)</span>
+                <span class="bar-value">25.8%</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill bar-fill-muted pct-25-8"></div></div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-row-header">
+                <span class="bar-label">Fine-tuned BP1 (3-run mean)</span>
+                <span class="bar-value bar-value-accent">99.2%</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill pct-99-2"></div></div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-row-header">
+                <span class="bar-label">Phrase-list baseline</span>
+                <span class="bar-value">58.3%</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill bar-fill-muted pct-58-3"></div></div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-row-header">
+                <span class="bar-label">Length baseline (&ge;32 tokens)</span>
+                <span class="bar-value">85.0%</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill bar-fill-muted pct-85-0"></div></div>
+            </div>
+            <div class="bar-axis" aria-hidden="true"><span>0%</span><span>50%</span><span>100%</span></div>
+          </div>
+          <details class="data-details">
+            <summary>Data table</summary>
+            <table>
+              <thead><tr><th>Arm</th><th>Caught / 120</th><th>Rate</th></tr></thead>
+              <tbody>
+                <tr><td>Base (P0)</td><td>31</td><td>25.8%</td></tr>
+                <tr><td>BP1 seed 42</td><td>119</td><td>99.2%</td></tr>
+                <tr><td>BP1 seed 43</td><td>119</td><td>99.2%</td></tr>
+                <tr><td>BP1 seed 44</td><td>119</td><td>99.2%</td></tr>
+                <tr><td>Phrase list</td><td>70</td><td>58.3%</td></tr>
+                <tr><td>Length rule</td><td>102</td><td>85.0%</td></tr>
+              </tbody>
+            </table>
+          </details>
+        </div>
+
+        <div class="card">
+          <h4 class="chart-title">Benign false-alarm rate <small class="chart-sub">(lower is better)</small></h4>
+          <p class="chart-desc">120 benign texts &middot; same benchmark population</p>
+          <div class="bar-chart" role="img" aria-label="Bar chart showing false alarm rates: Base model 3.3%, Fine-tuned BP1 mean 3.9%, Phrase-list baseline 0%, Length baseline 65%">
+            <div class="bar-row">
+              <div class="bar-row-header">
+                <span class="bar-label">Base model (P0, unmodified)</span>
+                <span class="bar-value">3.3%</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill bar-fill-muted pct-3-3"></div></div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-row-header">
+                <span class="bar-label">Fine-tuned BP1 (3-run mean)</span>
+                <span class="bar-value">3.9%</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill pct-3-9"></div></div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-row-header">
+                <span class="bar-label">Phrase-list baseline</span>
+                <span class="bar-value bar-value-green">0.0%</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill bar-fill-green pct-0"></div></div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-row-header">
+                <span class="bar-label">Length baseline (&ge;32 tokens)</span>
+                <span class="bar-value bar-value-red">65.0%</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill bar-fill-red pct-65-0"></div></div>
+            </div>
+            <div class="bar-axis" aria-hidden="true"><span>0%</span><span>50%</span><span>100%</span></div>
+          </div>
+          <details class="data-details">
+            <summary>Data table</summary>
+            <table>
+              <thead><tr><th>Arm</th><th>False alarms / 120</th><th>Rate</th></tr></thead>
+              <tbody>
+                <tr><td>Base (P0)</td><td>4</td><td>3.3%</td></tr>
+                <tr><td>BP1 seed 42</td><td>3</td><td>2.5%</td></tr>
+                <tr><td>BP1 seed 43</td><td>5</td><td>4.2%</td></tr>
+                <tr><td>BP1 seed 44</td><td>6</td><td>5.0%</td></tr>
+                <tr><td>Phrase list</td><td>0</td><td>0.0%</td></tr>
+                <tr><td>Length rule</td><td>78</td><td>65.0%</td></tr>
+              </tbody>
+            </table>
+          </details>
+        </div>
+
+      </div>
+
+      <p class="chart-note">Bootstrap 95% intervals on <strong>differences</strong> (3-run mean vs comparison, 1,000 resamples, 10 test scenarios): recall +73.3&thinsp;pts [62.5, 84.2] vs base model; false alarms +0.6&thinsp;pts [&minus;4.2, +8.4] vs base, inconclusive. With 10 test scenarios the intervals are wide. All data from one synthetic generator with shared templates.</p>
+
+      <ul class="research-facts">
+        <li>All splits from one synthetic generator. A phrase list alone separates much of the data, so results show learning of this generator&rsquo;s boundary patterns, not general understanding.</li>
+        <li>Not included in the npm package; not downloaded at runtime; not used by the install gate.</li>
+      </ul>
+      <p class="research-links"><a href="research.html" class="btn btn-primary">Methods &amp; full results</a> <a href="https://github.com/adityasugandhi/skillsync-mcp/tree/main/docs/research" class="btn btn-outline" target="_blank" rel="noopener">Research docs on GitHub</a></p>
+    </article>
   </div>
 </section>
 

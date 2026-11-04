@@ -19,24 +19,19 @@ SkillSync MCP (`@stranzwersweb2/skillsync-mcp`) is an open-source Model Context 
 npx -y @stranzwersweb2/skillsync-mcp
 ```
 
-Or add to Claude Code's `~/.claude/settings.json`:
+Claude Code:
 
-```json
-{
-  "mcpServers": {
-    "skillsmp": {
-      "command": "npx",
-      "args": ["-y", "@stranzwersweb2/skillsync-mcp"]
-    }
-  }
-}
+```bash
+claude mcp add --transport stdio --scope user skillsmp -- npx -y @stranzwersweb2/skillsync-mcp
 ```
+
+Setup guides for Cursor, Windsurf, GitHub Copilot (VS Code), Zed, OpenClaw and nanobot: https://skillsync.js.org/#install (docs-checked, not runtime-tested in every client).
 
 ## 13 MCP Tools
 
 ### Search & Discovery
 - `skillsmp_search` — Keyword search across SkillsMP marketplace
-- `skillsmp_ai_search` — Semantic search via the third-party SkillsMP ai-search API (SkillsMP states it uses Cloudflare AI; model not disclosed)
+- `skillsmp_ai_search` — Semantic search via the third-party SkillsMP ai-search API (implemented; upstream availability not verified)
 - `skillsmp_search_safe` — Search + auto-scan top results for security threats
 - `skillsmp_suggest` — AI-powered skill recommendations based on installed skills
 
