@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SkillSync MCP &mdash; Security-Gated Skill Management for Claude Code</title>
-  <meta name="description" content="An MCP server that runs a regex-based security scan before installing a skill and blocks critical matches. 101 threat patterns, 13 tools, config docs for 7 clients. Search, scan, install, and sync Claude Code skills.">
+  <meta name="description" content="Install community skills safely: SkillSync scans every GitHub skill repo against 101 threat patterns before install and blocks critical matches. 13 tools, config docs for 7 MCP clients.">
   <meta name="keywords" content="MCP, Model Context Protocol, Claude Code, skills, security scanner, prompt injection, AI tools, OpenClaw, Cursor, Windsurf, GitHub Copilot, Zed, nanobot">
   <meta name="author" content="Aditya Sugandhi">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -19,7 +19,7 @@
   <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="SkillSync MCP &mdash; Security-Gated Skill Management for Claude Code">
-  <meta property="og:description" content="Regex-based security scan before skill installation; critical matches are blocked. 101 threat patterns, 13 tools, 7 client configs.">
+  <meta property="og:description" content="Install community skills safely: 101 threat patterns scanned before install; critical matches blocked. 13 MCP tools, 7 client configs.">
   <meta property="og:url" content="https://skillsync.js.org/">
   <meta property="og:site_name" content="SkillSync MCP">
   <meta property="og:locale" content="en_US">
@@ -27,7 +27,7 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="SkillSync MCP &mdash; Security-Gated Skill Management for Claude Code">
-  <meta name="twitter:description" content="Regex-based security scan before skill installation; critical matches are blocked. 101 threat patterns, 13 tools, 7 client configs.">
+  <meta name="twitter:description" content="Install community skills safely: 101 threat patterns scanned before install; critical matches blocked. 13 MCP tools, 7 client configs.">
   <meta name="twitter:creator" content="@adityasugandhi">
 
   <!-- Favicon -->
@@ -79,7 +79,7 @@
       "SSRF prevention (github.com sources only)",
       "Content hashing and TOCTOU verification",
       "Query subscriptions synced from the SkillsMP API (local config)",
-      "Semantic search via the third-party SkillsMP API",
+      "Keyword search via the third-party SkillsMP API",
       "Config docs for 7 MCP clients"
     ]
   }
@@ -93,8 +93,7 @@
   <input type="checkbox" id="nav-toggle">
   <label for="nav-toggle" class="nav-hamburger" aria-label="Toggle navigation">&#9776;</label>
   <ul>
-    <li><a href="#features">Features</a></li>
-    <li><a href="#tools">Tools</a></li>
+    <li><a href="#workflow">How it works</a></li>
     <li><a href="#install">Install</a></li>
     <li><a href="#security">Security</a></li>
     <li><a href="research.html">Research</a></li>
@@ -108,8 +107,8 @@
 <!-- ─── Hero ─────────────────────────────────────────────────────────────── -->
 <section class="hero" id="hero">
   <div class="container">
-    <h1>Security-Gated Skill Management for AI Coding Assistants</h1>
-    <p class="hero-subtitle"><strong>Every skill is scanned against 101 regex threat patterns before it installs; critical matches are blocked.</strong></p>
+    <h1>Install skills safely.<br>Scan before you trust.</h1>
+    <p class="hero-subtitle"><strong>Every GitHub skill repo is scanned against 101 threat patterns before it touches your system. Critical matches are blocked &mdash; no manual review needed.</strong></p>
     <p class="hero-stats">101 regex threat patterns &middot; 13 MCP tools &middot; config docs for 7 clients</p>
 
     <div class="hero-install">
@@ -118,26 +117,73 @@
     </div>
 
     <div class="hero-cta">
-      <a href="https://www.npmjs.com/package/@stranzwersweb2/skillsync-mcp" class="btn btn-primary" target="_blank" rel="noopener">npm</a>
+      <a href="#install" class="btn btn-primary">Get started</a>
       <a href="https://github.com/adityasugandhi/skillsync-mcp" class="btn btn-outline" target="_blank" rel="noopener">GitHub</a>
     </div>
   </div>
 </section>
 
-<!-- ─── Research Highlight (experimental, not shipped) ───────────────────── -->
-<section class="research-highlight" id="research" aria-labelledby="research-title">
+<!-- ─── How it works ─────────────────────────────────────────────────────── -->
+<section id="workflow">
   <div class="container">
-    <article class="research-card">
-      <p class="research-label"><span class="badge badge-warning">Research &middot; Experimental &middot; Synthetic data</span></p>
-      <h2 id="research-title">Experimental detector: 99.2% attack detection on Boundary Pairs synthetic test data</h2>
-      <p class="research-lead">Experimental detector: 99.2% attack detection on Boundary Pairs synthetic test data, in each of three training runs (119/120 attacks each). Average benign false-alarm rate 3.9% (per-run 2.5%, 4.2%, 5.0%). 10 held-out scenarios from one synthetic generator; not evidence of real-world protection. Shipped rule-based scanner is separate.</p>
-      <ul class="research-facts">
-        <li>Fine-tuned DeBERTa-v3-base classifier; the unmodified base model caught 31/120 attacks with 4 false alarms on the same test set.</li>
-        <li>Benign false alarms: 3, 5 and 6 of 120 across the three runs. With 120 benign examples, a low false-alarm rate cannot be certified.</li>
-        <li>Not included in the npm package and not used by the install gate.</li>
-      </ul>
-      <p class="research-links"><a href="research.html" class="btn btn-primary">Methods &amp; full results</a> <a href="https://github.com/adityasugandhi/skillsync-mcp/tree/main/docs/research" class="btn btn-outline" target="_blank" rel="noopener">Research docs on GitHub</a></p>
-    </article>
+    <p class="section-label">How it works</p>
+    <h2>From search to safe install</h2>
+    <p>One workflow, inside your existing coding assistant. No dashboard. No new login. Skills install to <code>~/.claude/skills/</code>.</p>
+    <div class="grid grid-2">
+
+      <article class="card workflow-card">
+        <div class="step-header">
+          <span class="step-num" aria-hidden="true">1</span>
+          <h3>Search the marketplace</h3>
+        </div>
+        <p>Find skills by keyword from the SkillsMP community marketplace without leaving your assistant. No API key required to start (anonymous keyword search; upstream limit: 50&thinsp;req/day).</p>
+        <div class="terminal-demo" aria-label="Illustrative terminal example">
+          <div class="t-label">Claude Code</div>
+          <div class="t-input">search for git automation skills</div>
+          <div class="t-output">Found 12 results: git-flow-helper, branch-manager&hellip; <em>(illustrative)</em></div>
+        </div>
+      </article>
+
+      <article class="card workflow-card">
+        <div class="step-header">
+          <span class="step-num" aria-hidden="true">2</span>
+          <h3>Scan before you install</h3>
+        </div>
+        <p>SkillSync fetches the repo and runs every pattern. You see the full threat report before anything is written to disk. Max 50 files, 512&thinsp;KB per file, 2&thinsp;MB total.</p>
+        <div class="terminal-demo" aria-label="Illustrative terminal example">
+          <div class="t-label">Claude Code</div>
+          <div class="t-input">scan github.com/user/git-flow-helper</div>
+          <div class="t-output t-safe">&#10003; 101 patterns checked &middot; Risk: Low &middot; 2 warnings <em>(illustrative)</em></div>
+        </div>
+      </article>
+
+      <article class="card workflow-card">
+        <div class="step-header">
+          <span class="step-num" aria-hidden="true">3</span>
+          <h3>Review the findings</h3>
+        </div>
+        <p>Every pattern match is explained. Critical threats are blocked with no override. Medium/high risk requires <code>force=true</code>. Safe skills proceed with any warnings shown.</p>
+        <div class="terminal-demo" aria-label="Illustrative blocked example">
+          <div class="t-label">Claude Code &mdash; blocked example</div>
+          <div class="t-blocked">&#10007; BLOCKED &mdash; prompt-injection (critical)</div>
+          <div class="t-output">Line 42: &ldquo;Ignore previous instructions&hellip;&rdquo; <em>(illustrative)</em></div>
+        </div>
+      </article>
+
+      <article class="card workflow-card">
+        <div class="step-header">
+          <span class="step-num" aria-hidden="true">4</span>
+          <h3>Install only what passes</h3>
+        </div>
+        <p>Safe skills install to <code>~/.claude/skills/</code> with <code>npm install --ignore-scripts</code>. SHA-256 content hash verified. Subscription sync keeps them updated automatically.</p>
+        <div class="terminal-demo" aria-label="Illustrative install example">
+          <div class="t-label">Claude Code</div>
+          <div class="t-safe">&#10003; Installed &mdash; git-flow-helper v2.1.0</div>
+          <div class="t-output">~/.claude/skills/git-flow-helper/ &middot; SHA verified <em>(illustrative)</em></div>
+        </div>
+      </article>
+
+    </div>
   </div>
 </section>
 
@@ -189,7 +235,7 @@
           <tr>
             <td>Marketplace search</td>
             <td>Manual</td>
-            <td class="highlight-col"><span class="badge badge-success">Keyword + semantic (SkillsMP API)</span></td>
+            <td class="highlight-col"><span class="badge badge-success">Keyword search (SkillsMP API); semantic search implemented, upstream availability may vary</span></td>
           </tr>
           <tr>
             <td>Query subscriptions</td>
@@ -227,7 +273,7 @@
       </article>
       <article class="card">
         <h3>Marketplace Search</h3>
-        <p>Keyword and semantic search across the SkillsMP marketplace through the third-party SkillsMP API (SkillsMP states its semantic search uses Cloudflare AI; the model is not disclosed). Search queries, and an API key if you set one, are sent to skillsmp.com; suggestions also send the names of up to 10 installed skills and your optional context. Results are untrusted third-party content. Suggestions based on your installed skills and side-by-side comparison with security diffs.</p>
+        <p>Keyword search across the SkillsMP marketplace through the third-party SkillsMP API. Semantic search is implemented but depends on upstream availability; SkillsMP states it uses Cloudflare AI (model not disclosed). Search queries and an API key (if set) are sent to skillsmp.com; suggestions also send up to 10 installed skill names and optional context. Results are untrusted third-party content.</p>
       </article>
       <article class="card">
         <h3>Skill Management</h3>
@@ -249,7 +295,7 @@
     </details>
     <details name="tools">
       <summary><code>skillsmp_ai_search</code> &mdash; AI Semantic Search</summary>
-      <p>Natural language search through the SkillsMP ai-search API (hosted by SkillsMP; it states it uses Cloudflare AI). Returns relevance-scored results that are treated as untrusted content.</p>
+      <p>Natural language search through the SkillsMP ai-search API (hosted by SkillsMP; it states it uses Cloudflare AI). Upstream availability depends on SkillsMP. Returns relevance-scored results that are treated as untrusted content.</p>
     </details>
     <details name="tools">
       <summary><code>skillsmp_search_safe</code> &mdash; Search + Auto-Scan</summary>
@@ -257,7 +303,7 @@
     </details>
     <details name="tools">
       <summary><code>skillsmp_suggest</code> &mdash; AI Suggestions</summary>
-      <p>Recommends new skills based on what you already have installed and optional context about your current project. Filters out already-installed skills automatically. Privacy note: the query sent to SkillsMP includes the names of up to 10 of your installed skills and your optional context (up to 200 characters).</p>
+      <p>Recommends new skills based on what you already have installed and optional context about your current project. Filters out already-installed skills automatically. Depends on upstream SkillsMP API availability. Privacy note: the query sent to SkillsMP includes the names of up to 10 of your installed skills and your optional context (up to 200 characters).</p>
     </details>
 
     <h3>Security</h3>
@@ -295,7 +341,7 @@
     </details>
     <details name="tools">
       <summary><code>skillsync_sync_now</code> &mdash; Run Sync</summary>
-      <p>Polls subscriptions, diffs against installed skills, and installs/updates/removes as needed. Supports <code>dryRun=true</code> to preview changes before applying.</p>
+      <p>Polls subscriptions, diffs against installed skills, and installs/updates/removes as needed. Supports <code>dryRun=true</code> to preview changes before applying. Run a dry-run first before enabling automatic sync.</p>
     </details>
     <details name="tools">
       <summary><code>skillsync_status</code> &mdash; Sync Status</summary>
@@ -308,7 +354,7 @@
 <section id="install">
   <div class="container">
     <h2>Quick Start</h2>
-    <p>Add SkillSync to your MCP client configuration:</p>
+    <p>Add SkillSync to your MCP client configuration. Node 20+ required. No API key needed to get started &mdash; keyword search runs anonymously (SkillsMP limit: 50&thinsp;req/day). Add an optional <code>SKILLSMP_API_KEY</code> env var for account-based access (third-party terms apply).</p>
 
     <details name="install" open>
       <summary>Claude Code</summary>
@@ -321,6 +367,7 @@
     }
   }
 }</code></pre>
+      <p><small>Skill files install to <code>~/.claude/skills/</code>. Other MCP clients can invoke the management tools but skill loading depends on each client.</small></p>
     </details>
 
     <details name="install">
@@ -411,6 +458,27 @@
   }
 }</code></pre>
     </details>
+
+    <h3>Try these prompts</h3>
+    <p class="section-note">Prompts are illustrative &mdash; actual output depends on the skill and SkillsMP API response.</p>
+    <div class="prompt-examples">
+      <div class="prompt-example">
+        <div class="prompt-label">Search</div>
+        <code>search for git-related skills</code>
+      </div>
+      <div class="prompt-example">
+        <div class="prompt-label">Scan before install</div>
+        <code>scan github.com/user/skill-repo before I install it</code>
+      </div>
+      <div class="prompt-example">
+        <div class="prompt-label">Audit installed</div>
+        <code>audit all my installed skills for threats</code>
+      </div>
+      <div class="prompt-example">
+        <div class="prompt-label">Subscription sync (dry run first)</div>
+        <code>show me what sync would change before I enable automatic sync</code>
+      </div>
+    </div>
 
     <h3>Client Compatibility</h3>
     <div class="table-wrap">
@@ -504,6 +572,128 @@
       <li>15-minute scan cache with 100-entry LRU eviction</li>
       <li>fs.watch startup verification with debounced re-scanning</li>
     </ul>
+  </div>
+</section>
+
+<!-- ─── Research Highlight (experimental, not shipped) ───────────────────── -->
+<section class="research-highlight" id="research" aria-labelledby="research-title">
+  <div class="container">
+    <article class="research-card">
+      <p class="research-label"><span class="badge badge-warning">Research &middot; Experimental &middot; Synthetic data</span></p>
+      <h2 id="research-title">Experimental detector: not part of the shipped package</h2>
+      <p class="research-lead">A fine-tuned DeBERTa-v3-base classifier was evaluated offline on the Boundary Pairs synthetic dataset. 99.2% attack detection in each of three training runs (119/120 each); average benign false-alarm rate 3.9% (per-run 2.5%, 4.2%, 5.0%). 10 held-out scenarios from one synthetic generator; not evidence of real-world protection. The shipped package is the rule-based scanner only &mdash; this model is not installed, not downloaded at runtime, and not used by the install gate.</p>
+
+      <h3>Test results on Boundary Pairs synthetic data</h3>
+      <div class="grid grid-2">
+
+        <div class="card">
+          <h4 class="chart-title">Attack detection <small style="font-weight:normal">(higher is better)</small></h4>
+          <p class="chart-desc">120 attack texts &middot; Boundary Pairs synthetic test set</p>
+          <div class="bar-chart" role="img" aria-label="Bar chart showing attack detection: Base model 25.8%, Fine-tuned BP1 mean 99.2%, Phrase-list baseline 58.3%, Length baseline 85.0%">
+            <div class="bar-row">
+              <div class="bar-row-header">
+                <span class="bar-label">Base model (P0, unmodified)</span>
+                <span class="bar-value">25.8%</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill bar-fill-muted" style="--pct:25.8%"></div></div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-row-header">
+                <span class="bar-label">Fine-tuned BP1 (3-run mean)</span>
+                <span class="bar-value bar-value-accent">99.2%</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill" style="--pct:99.2%"></div></div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-row-header">
+                <span class="bar-label">Phrase-list baseline</span>
+                <span class="bar-value">58.3%</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill bar-fill-muted" style="--pct:58.3%"></div></div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-row-header">
+                <span class="bar-label">Length baseline (&ge;32 tokens)</span>
+                <span class="bar-value">85.0%</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill bar-fill-muted" style="--pct:85.0%"></div></div>
+            </div>
+          </div>
+          <details style="margin-top:0.75rem">
+            <summary style="font-size:0.8rem">Data table</summary>
+            <table>
+              <thead><tr><th>Arm</th><th>Caught / 120</th><th>Rate</th></tr></thead>
+              <tbody>
+                <tr><td>Base (P0)</td><td>31</td><td>25.8%</td></tr>
+                <tr><td>BP1 seed 42</td><td>119</td><td>99.2%</td></tr>
+                <tr><td>BP1 seed 43</td><td>119</td><td>99.2%</td></tr>
+                <tr><td>BP1 seed 44</td><td>119</td><td>99.2%</td></tr>
+                <tr><td>Phrase list</td><td>70</td><td>58.3%</td></tr>
+                <tr><td>Length rule</td><td>102</td><td>85.0%</td></tr>
+              </tbody>
+            </table>
+          </details>
+        </div>
+
+        <div class="card">
+          <h4 class="chart-title">Benign false-alarm rate <small style="font-weight:normal">(lower is better)</small></h4>
+          <p class="chart-desc">120 benign texts &middot; same benchmark population</p>
+          <div class="bar-chart" role="img" aria-label="Bar chart showing false alarm rates: Base model 3.3%, Fine-tuned BP1 mean 3.9%, Phrase-list baseline 0%, Length baseline 65%">
+            <div class="bar-row">
+              <div class="bar-row-header">
+                <span class="bar-label">Base model (P0, unmodified)</span>
+                <span class="bar-value">3.3%</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill bar-fill-muted" style="--pct:3.3%"></div></div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-row-header">
+                <span class="bar-label">Fine-tuned BP1 (3-run mean)</span>
+                <span class="bar-value">3.9%</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill" style="--pct:3.9%"></div></div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-row-header">
+                <span class="bar-label">Phrase-list baseline</span>
+                <span class="bar-value bar-value-green">0.0%</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill bar-fill-green" style="--pct:0.5%"></div></div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-row-header">
+                <span class="bar-label">Length baseline (&ge;32 tokens)</span>
+                <span class="bar-value bar-value-red">65.0%</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill bar-fill-red" style="--pct:65.0%"></div></div>
+            </div>
+          </div>
+          <details style="margin-top:0.75rem">
+            <summary style="font-size:0.8rem">Data table</summary>
+            <table>
+              <thead><tr><th>Arm</th><th>False alarms / 120</th><th>Rate</th></tr></thead>
+              <tbody>
+                <tr><td>Base (P0)</td><td>4</td><td>3.3%</td></tr>
+                <tr><td>BP1 seed 42</td><td>3</td><td>2.5%</td></tr>
+                <tr><td>BP1 seed 43</td><td>5</td><td>4.2%</td></tr>
+                <tr><td>BP1 seed 44</td><td>6</td><td>5.0%</td></tr>
+                <tr><td>Phrase list</td><td>0</td><td>0.0%</td></tr>
+                <tr><td>Length rule</td><td>78</td><td>65.0%</td></tr>
+              </tbody>
+            </table>
+          </details>
+        </div>
+
+      </div>
+
+      <p class="chart-note">Bootstrap 95% intervals on <strong>differences</strong> (3-run mean vs comparison, 1,000 resamples, 10 test scenarios): recall +73.3&thinsp;pts [62.5, 84.2] vs base model; false alarms +0.6&thinsp;pts [&minus;4.2, +8.4] vs base, inconclusive. With 10 test scenarios the intervals are wide. All data from one synthetic generator with shared templates.</p>
+
+      <ul class="research-facts">
+        <li>All splits from one synthetic generator. A phrase list alone separates much of the data, so results show learning of this generator&rsquo;s boundary patterns, not general understanding.</li>
+        <li>Not included in the npm package; not downloaded at runtime; not used by the install gate.</li>
+      </ul>
+      <p class="research-links"><a href="research.html" class="btn btn-primary">Methods &amp; full results</a> <a href="https://github.com/adityasugandhi/skillsync-mcp/tree/main/docs/research" class="btn btn-outline" target="_blank" rel="noopener">Research docs on GitHub</a></p>
+    </article>
   </div>
 </section>
 

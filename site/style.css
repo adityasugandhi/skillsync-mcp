@@ -668,3 +668,185 @@ pre code {
     padding: 2.5rem 0.75rem;
   }
 }
+
+/* ─── Section Label ───────────────────────────────────────────────────────── */
+
+.section-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 0.4rem;
+}
+
+/* ─── Workflow Step Cards ─────────────────────────────────────────────────── */
+
+.workflow-card h3 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.step-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 0.75rem;
+}
+
+.step-num {
+  width: 28px;
+  height: 28px;
+  background: var(--accent);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+/* ─── Terminal Demo ───────────────────────────────────────────────────────── */
+
+.terminal-demo {
+  background: var(--charcoal);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+  margin-top: 0.75rem;
+  line-height: 1.5;
+}
+
+.t-label {
+  color: var(--warm-gray);
+  font-size: 0.72rem;
+  margin-bottom: 6px;
+}
+
+.t-input { color: #A3E635; }
+
+.t-output {
+  color: #6B7280;
+  margin-top: 6px;
+  font-size: 0.75rem;
+}
+
+.t-output em { color: var(--warm-gray); font-style: normal; }
+
+.t-safe { color: #86EFAC; }
+
+.t-blocked {
+  color: #FCA5A5;
+  font-weight: 600;
+}
+
+/* ─── Prompt Examples ─────────────────────────────────────────────────────── */
+
+.prompt-examples {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.prompt-example {
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+.prompt-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.section-note {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin: 0.25rem 0 0.5rem;
+}
+
+/* ─── Bar Charts ──────────────────────────────────────────────────────────── */
+
+.chart-title {
+  margin: 0 0 4px;
+  font-size: 0.95rem;
+}
+
+.chart-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0 0 1rem;
+}
+
+.bar-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bar-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bar-row-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.bar-label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.bar-value {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.bar-value-accent { color: var(--accent); }
+
+.bar-track {
+  height: 18px;
+  background: var(--bg-alt);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.bar-fill {
+  height: 100%;
+  width: var(--pct);
+  background: var(--accent);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.bar-fill-muted { background: var(--warm-gray); }
+.bar-fill-green { background: var(--green-text); }
+.bar-fill-red { background: var(--red-text); }
+
+.chart-note {
+  font-size: 0.82rem;
+  line-height: 1.6;
+  background: var(--amber-light);
+  color: var(--amber-text);
+  border: 1px solid;
+  border-color: var(--amber-text);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-top: 1rem;
+  opacity: 0.9;
+}
