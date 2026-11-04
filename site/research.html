@@ -125,7 +125,7 @@
       <li>Attack texts are slightly longer than benign ones; the fine-tuned model was not length-controlled.</li>
       <li>120 benign test texts cannot certify a low false-alarm rate.</li>
       <li>No evidence about real emails, indirect injection in tool outputs, unseen attack families, or production use.</li>
-      <li>Earlier experiments did not transfer well: detectors trained on our earlier data were weak on email and document-style contexts, and three attempts to build length-controlled context training sets failed their own pre-registered checks (a length-balance gate, a primary generalisation gate with hard negatives included, and a whole-calibration-set length gate). These failures are kept on record.</li>
+      <li>Earlier experiments did not transfer well: detectors trained on our earlier data were weak on email and document-style contexts, and three attempts to build length-controlled context training sets failed their own pre-registered checks (C1 failed its length gate; C1R failed its primary semantic/generalisation gate with the NotInject hard-negative set; CAL-R failed its whole-calibration-set check). These failures are kept on record.</li>
     </ul>
     <p>Full methods, results and negative results: <a href="https://github.com/adityasugandhi/skillsync-mcp/tree/main/docs/research" target="_blank" rel="noopener">docs/research on GitHub</a>.</p>
   </div>
