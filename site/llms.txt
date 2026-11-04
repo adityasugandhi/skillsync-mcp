@@ -74,7 +74,7 @@ Warning-only: Obfuscation, Code Execution, Shell Execution, Network, Crypto Mini
 
 ## Data Flow
 
-Search, suggestions and sync send queries (and an API key if configured) to the SkillsMP API at skillsmp.com. Skill source is fetched from github.com for scanning. Sync subscriptions are stored in a local config file.
+Search, suggestions and sync send queries (and an API key if configured) to the SkillsMP API at skillsmp.com. skillsmp_suggest builds its query from the names of up to 10 installed skills plus the optional project context (up to 200 characters) and sends it to SkillsMP. Skill source is fetched from github.com for scanning. Sync subscriptions are stored in a local config file.
 
 ## Research (experimental, not shipped)
 

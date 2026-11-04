@@ -74,11 +74,11 @@
         </tbody>
       </table>
     </div>
-    <p>Pre-training checks found no duplicate texts and no pair or scenario overlap between splits. Only the text is used as input; no metadata.</p>
+    <p>Pre-training checks used train and validation only: no duplicate texts and no pair or scenario overlap between them. The test split was not read until all three runs had finished and the thresholds were frozen; it was then checked (hash, schema, duplicates, pairs, and no scenario or pair overlap with train or validation) before any scoring. Only the text is used as input; no metadata.</p>
     <h3>Training</h3>
-    <p>Three runs with seeds 42, 43 and 44 and an identical recipe, all reported (no best-seed selection): 3 epochs (159 optimizer steps), AdamW with learning rate 2e-5 and weight decay 0.01, 9 warm-up steps then linear decay, effective batch 16 (4 &times; 4 accumulation), max length 512 tokens, binary cross-entropy on the score with positive weight 1. Training ran on Apple MPS in fp32, which is not bit-deterministic.</p>
+    <p>Three runs with seeds 42, 43 and 44 and an identical recipe, all reported (no best-seed selection): 3 epochs (159 optimizer steps), AdamW with learning rate 2e-5 and weight decay 0.01, 9 warm-up steps then linear decay, effective batch 16 (4 &times; 4 accumulation; each epoch has 210 micro-batches, so its last optimizer step accumulates only 2), max length 512 tokens, binary cross-entropy on the score with positive weight 1. Training ran on Apple MPS in fp32, which is not bit-deterministic.</p>
     <h3>Thresholds and baselines</h3>
-    <p>Each model's threshold was chosen on validation data only: the most attacks caught with at most 1 of 60 benign false alarms. Thresholds and two simple baselines were frozen before the test set was read once:</p>
+    <p>Each model's threshold was chosen on validation data only: the most attacks caught with at most 1 of 60 benign false alarms. Full-precision thresholds: base model 14.985377311706543; seed 42 &minus;2.541528105735779; seed 43 &minus;2.8378076553344727; seed 44 &minus;2.841301918029785. Thresholds and two simple baselines were frozen before the test set was read once:</p>
     <ul>
       <li><strong>Phrase-list baseline:</strong> word pairs that occur in at least 10 training rows of one class and none of the other. It was chosen after a validation diagnostic, so it is an adaptive baseline.</li>
       <li><strong>Length baseline:</strong> flag any text of 32 or more tokens.</li>

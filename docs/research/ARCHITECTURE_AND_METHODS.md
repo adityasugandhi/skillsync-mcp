@@ -38,7 +38,7 @@ An earlier research track used a small MiniLM-based model with verdict, span and
 ### Pre-training checks (train and validation only; test not read)
 
 - File hashes matched the repository's checksum manifest. No schema violations or missing fields.
-- No exact or normalised duplicate texts within or across splits. No pair or scenario overlap between train and validation.
+- No exact or normalised duplicate texts within or between train and validation. No pair or scenario overlap between train and validation. (The test split was checked separately, after training; see §6.)
 - All 13 attack families (12 pair families) appear in every split, so this is not an unseen-family test.
 - Length: the longest text is 150 tokens, so nothing is truncated at 512 tokens. Attack texts are slightly longer. Token-length AUROC was 0.578 (train) and 0.611 (validation), and a fixed length rule reached 0.62 balanced accuracy on validation.
 - Wording: many word pairs occur in only one class. A phrase list built from train alone classified about 85% of validation rows, with 100% accuracy on those rows. This is a strong template confound.
@@ -55,7 +55,7 @@ The recipe was fixed and recorded before the first optimizer step.
 | Epochs | 3 (159 optimizer steps) |
 | Optimizer | AdamW, learning rate 2e-5, weight decay 0.01 (all parameters), default betas/eps, no gradient clipping |
 | Schedule | linear warm-up for 9 steps (`int(0.06 * 159)`), then linear decay to 0 |
-| Batch | micro-batch 4, gradient accumulation 4 (effective 16) |
+| Batch | micro-batch 4, gradient accumulation 4 (effective 16). Each epoch has 210 micro-batches, i.e. 52 full accumulation groups plus a final partial group of 2 micro-batches, giving 53 optimizer steps per epoch (159 total) |
 | Loss | binary cross-entropy with logits on `logit1 - logit0`, positive weight 1.0 (balanced classes) |
 | Max length | 512 tokens, truncation on, dynamic padding |
 | Data order | per-epoch shuffle from a generator seeded with `seed + epoch` |
@@ -74,10 +74,10 @@ Thresholds were chosen per model on **validation data only**:
 
 | Model | Validation threshold | Attacks caught (of 60) | False alarms (of 60) |
 |---|---|---|---|
-| P0 (base) | 14.985 | 10 | 1 |
-| BP1 seed 42 | -2.542 | 60 | 1 |
-| BP1 seed 43 | -2.838 | 60 | 1 |
-| BP1 seed 44 | -2.841 | 60 | 1 |
+| P0 (base) | 14.985377311706543 | 10 | 1 |
+| BP1 seed 42 | -2.541528105735779 | 60 | 1 |
+| BP1 seed 43 | -2.8378076553344727 | 60 | 1 |
+| BP1 seed 44 | -2.841301918029785 | 60 | 1 |
 
 Two non-learned baselines were frozen before the test set was read:
 

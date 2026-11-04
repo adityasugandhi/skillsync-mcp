@@ -44,7 +44,7 @@ The detector is a fine-tuned DeBERTa-v3-base classifier. It is not part of the n
 
 ## Data Flow
 
-Search, suggestions and subscription sync send queries (and `SKILLSMP_API_KEY`, if set) to the SkillsMP API at `skillsmp.com`. Semantic search is provided by SkillsMP (it states it uses Cloudflare AI; the model is not disclosed). Skill source is fetched from `github.com` for scanning. Sync subscriptions live in a local config file; SkillSync has no cloud service of its own.
+Search, suggestions and subscription sync send queries (and `SKILLSMP_API_KEY`, if set) to the SkillsMP API at `skillsmp.com`. Note that `skillsmp_suggest` builds its query from **the names of up to 10 of your installed skills**, plus the optional project `context` you pass (up to 200 characters), and sends that query to SkillsMP. Semantic search is provided by SkillsMP (it states it uses Cloudflare AI; the model is not disclosed). Skill source is fetched from `github.com` for scanning. Sync subscriptions live in a local config file; SkillSync has no cloud service of its own.
 
 ## Tools (13)
 

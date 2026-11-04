@@ -22,19 +22,21 @@ These were run before BP1 on different data. They are reported so the BP1 result
 ### Small multi-head model on mixed benchmark data
 
 - **Setup:** a MiniLM-L6-v2-based model (about 22M parameters) with verdict, span and category outputs. It passed its development checks.
-- **Frozen evaluation set:** 1,500 attack texts from public prompt-injection benchmarks (LLMail-Inject and SEP), plus 239 benign skill files.
+- **Frozen evaluation set:** 1,500 attack texts from public prompt-injection benchmarks (LLMail-Inject and SEP), plus 239 benign files: 160 benign LLMail-Inject emails, 75 content-bearing `.cursorrules` files and 4 Neo4j packages.
+- **How it was scored:** a benign file counts as a false alarm if *any* section of the file is flagged (whole-file rule), not as one pooled classification. Recall and false-alarm figures are means over the training seeds.
 
-| Model | Pooled attack recall | Benign-file false-alarm rate |
+| Model | Pooled attack recall (seed mean) | Benign-file false-alarm rate (seed mean, whole-file) |
 |---|---|---|
 | Small multi-head model | 37% | 44% |
 | ProtectAI base model, unmodified | 8% | 0.8% |
 | ProtectAI base model, fine-tuned on that benchmark data | 17% | 0.1% |
 
-- The fine-tuned base model improved recall over the unmodified model by 9.4 points (95% CI 6.1 to 13.1) at a lower false-alarm rate.
+- The fine-tuned base model improved recall over the unmodified model by 9.4 points (95% CI 6.1 to 13.0).
+- Its point estimate for false alarms was lower, but the interval crosses zero (−2.0 to +0.3 points), so the false-alarm comparison is **inconclusive**, not an improvement.
 - The small model's 44% false-alarm rate on whole benign files makes it unusable as a gate.
 - **Confounds:** the attack texts carry an email wrapper the benign files lack; the classes differ in length; and roughly a quarter of the LLMail-Inject labels we inspected were disputable.
 - **Protocol notes:**
-  - In one run the evaluation set was scored before the fine-tuned fits had finished. This was disclosed at the time; no results were viewed before the fits completed.
+  - In one run the evaluation set was scored before the fine-tuned fits had finished. Those early scores were reported as uninspected and were not kept, but this was not independently verified. The evaluation should therefore not be read as a strict once-only, original-order evaluation.
   - A grouping key in the bootstrap was corrected to use benchmark subtasks rather than individual items.
 
 ### Context-insertion experiments
