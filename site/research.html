@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillSync Research &mdash; Experimental Prompt-Injection Detector</title>
+  <meta name="description" content="Experimental research, not part of the shipped SkillSync package: a fine-tuned DeBERTa-v3-base detector evaluated on Boundary Pairs synthetic test data, with methods, baselines, uncertainty and limits.">
+  <meta name="author" content="Aditya Sugandhi">
+  <link rel="canonical" href="https://skillsync.js.org/research.html">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <script>
+    (function(){
+      var s=localStorage.getItem('theme');
+      var p=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';
+      document.documentElement.setAttribute('data-theme',s||p);
+    })();
+  </script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="brand"><strong>SkillSync MCP</strong></a>
+  <input type="checkbox" id="nav-toggle">
+  <label for="nav-toggle" class="nav-hamburger" aria-label="Toggle navigation">&#9776;</label>
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="#summary">Summary</a></li>
+    <li><a href="#methods">Methods</a></li>
+    <li><a href="#results">Results</a></li>
+    <li><a href="#limits">Limits</a></li>
+    <li><a href="https://github.com/adityasugandhi/skillsync-mcp" target="_blank" rel="noopener">GitHub</a></li>
+    <li><button class="theme-btn" id="theme-toggle" aria-label="Toggle dark mode">Dark</button></li>
+  </ul>
+</nav>
+
+<main class="research-page">
+
+<section id="summary">
+  <div class="container">
+    <h1>Research: experimental prompt-injection detector</h1>
+    <article class="research-card">
+      <p class="research-label"><span class="badge badge-warning">Research &middot; Experimental &middot; Synthetic data</span></p>
+      <p class="research-lead">Experimental detector: 99.2% attack detection on Boundary Pairs synthetic test data, in each of three training runs (119/120 attacks each). Average benign false-alarm rate 3.9% (per-run 2.5%, 4.2%, 5.0%). 10 held-out scenarios from one synthetic generator; not evidence of real-world protection. Shipped rule-based scanner is separate.</p>
+    </article>
+    <h2>Shipped product vs. research</h2>
+    <div class="grid grid-2">
+      <article class="card">
+        <h3>Shipped (npm package)</h3>
+        <p>A rule-based install gate: 101 regex threat patterns in 19 categories, output sanitization, and content hashing. It contains no machine-learning model. Marketplace search uses the third-party SkillsMP API.</p>
+      </article>
+      <article class="card">
+        <h3>Research (not shipped)</h3>
+        <p>A fine-tuned DeBERTa-v3-base text classifier, trained and evaluated offline. It is not in the npm package, is not downloaded at install time, and is not used by the install gate.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="methods">
+  <div class="container">
+    <h2>Methods</h2>
+    <h3>Model</h3>
+    <p>Base model: <code>protectai/deberta-v3-base-prompt-injection-v2</code> at revision <code>90c9989b1a342275dd0d1a95aad283c04e075671</code>, an existing DeBERTa-v3-base sequence classifier (labels SAFE / INJECTION). No new architecture or head: the whole model is fine-tuned, and the detection score is <code>logit(INJECTION) &minus; logit(SAFE)</code>. The unmodified base model is reported as the comparison arm.</p>
+    <h3>Data</h3>
+    <p><a href="https://github.com/3nesdeniz/agentic-prompt-injection-boundary-pairs" target="_blank" rel="noopener">Agentic Prompt-Injection Boundary Pairs</a> (CC BY 4.0), pinned at commit <code>30af820d</code>. Each pair holds one text that preserves an intended authorization boundary and one that tries to cross it. The author's splits are grouped by scenario:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Split</th><th>Rows</th><th>Attack / benign</th><th>Scenarios</th></tr></thead>
+        <tbody>
+          <tr><td>Train</td><td>840</td><td>420 / 420</td><td>35</td></tr>
+          <tr><td>Validation</td><td>120</td><td>60 / 60</td><td>5</td></tr>
+          <tr><td>Test</td><td>240</td><td>120 / 120</td><td>10</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Pre-training checks used train and validation only: no duplicate texts and no pair or scenario overlap between them. The test split was not read until all three runs had finished and the thresholds were frozen; it was then checked (hash, schema, duplicates, pairs, and no scenario or pair overlap with train or validation) before any scoring. Only the text is used as input; no metadata.</p>
+    <h3>Training</h3>
+    <p>Three runs with seeds 42, 43 and 44 and an identical recipe, all reported (no best-seed selection): 3 epochs (159 optimizer steps), AdamW with learning rate 2e-5 and weight decay 0.01, 9 warm-up steps then linear decay, effective batch 16 (4 &times; 4 accumulation; each epoch has 210 micro-batches, so its last optimizer step accumulates only 2), max length 512 tokens, binary cross-entropy on the score with positive weight 1. Training ran on Apple MPS in fp32, which is not bit-deterministic.</p>
+    <h3>Thresholds and baselines</h3>
+    <p>Each model's threshold was chosen on validation data only: the most attacks caught with at most 1 of 60 benign false alarms. Full-precision thresholds: base model 14.985377311706543; seed 42 &minus;2.541528105735779; seed 43 &minus;2.8378076553344727; seed 44 &minus;2.841301918029785. Thresholds and two simple baselines were frozen before the test set was read once:</p>
+    <ul>
+      <li><strong>Phrase-list baseline:</strong> word pairs that occur in at least 10 training rows of one class and none of the other. It was chosen after a validation diagnostic, so it is an adaptive baseline.</li>
+      <li><strong>Length baseline:</strong> flag any text of 32 or more tokens.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="results">
+  <div class="container">
+    <h2>Test results</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Arm</th><th>Attacks caught (of 120)</th><th>Benign false alarms (of 120)</th></tr></thead>
+        <tbody>
+          <tr><td>Base model, unmodified</td><td>31 (25.8%)</td><td>4 (3.3%)</td></tr>
+          <tr><td>Fine-tuned, seed 42</td><td>119 (99.2%)</td><td>3 (2.5%)</td></tr>
+          <tr><td>Fine-tuned, seed 43</td><td>119 (99.2%)</td><td>5 (4.2%)</td></tr>
+          <tr><td>Fine-tuned, seed 44</td><td>119 (99.2%)</td><td>6 (5.0%)</td></tr>
+          <tr><td>Phrase-list baseline</td><td>70 (58.3%)</td><td>0 (0.0%)</td></tr>
+          <tr><td>Length baseline</td><td>102 (85.0%)</td><td>78 (65.0%)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Differences (fine-tuned 3-run mean minus comparison), with 95% intervals from a paired bootstrap over the 10 test scenarios (1,000 resamples):</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Comparison</th><th>Attack detection</th><th>Benign false alarms</th></tr></thead>
+        <tbody>
+          <tr><td>vs. base model</td><td>+73.3 pts [62.5, 84.2]</td><td>+0.6 pts [&minus;4.2, +8.4]</td></tr>
+          <tr><td>vs. phrase-list baseline</td><td>+40.8 pts [26.7, 56.7]</td><td>+3.9 pts [0.0, +10.8]</td></tr>
+          <tr><td>vs. length baseline</td><td>+14.2 pts [9.2, 18.3]</td><td>&minus;61.1 pts [&minus;70.3, &minus;52.5]</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">With only 10 test scenarios the intervals are wide and unstable. The false-alarm comparison with the base model is inconclusive.</p>
+  </div>
+</section>
+
+<section id="limits">
+  <div class="container">
+    <h2>Limits</h2>
+    <ul>
+      <li>All splits come from one synthetic generator with shared templates. A simple phrase list already separates much of the data, so the result shows learning of this generator&rsquo;s boundary patterns, not general understanding.</li>
+      <li>Attack texts are slightly longer than benign ones; the fine-tuned model was not length-controlled.</li>
+      <li>120 benign test texts cannot certify a low false-alarm rate.</li>
+      <li>No evidence about real emails, indirect injection in tool outputs, unseen attack families, or production use.</li>
+      <li>Earlier experiments did not transfer well: detectors trained on our earlier data were weak on email and document-style contexts, and three attempts to build length-controlled context training sets failed their own pre-registered checks (C1 failed its length gate; C1R failed its primary semantic/generalisation gate with the NotInject hard-negative set; CAL-R failed its whole-calibration-set check). These failures are kept on record.</li>
+    </ul>
+    <p>Full methods, results and negative results: <a href="https://github.com/adityasugandhi/skillsync-mcp/tree/main/docs/research" target="_blank" rel="noopener">docs/research on GitHub</a>.</p>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <p><a href="index.html">SkillSync MCP</a> &middot; v1.4.1 &middot; MIT License &middot; Research is experimental and is not part of the shipped package.</p>
+  </div>
+</footer>
+
+</main>
+<script src="script.js"></script>
+</body>
+</html>

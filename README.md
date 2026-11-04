@@ -1,23 +1,29 @@
 # SkillSync MCP
 
 [![npm version](https://img.shields.io/npm/v/@stranzwersweb2/skillsync-mcp)](https://www.npmjs.com/package/@stranzwersweb2/skillsync-mcp)
-[![Smithery](https://smithery.ai/badge/adityasugandhi/skillsync-mcp)](https://smithery.ai/servers/adityasugandhi/skillsync-mcp)
+[![LightNow capabilities](https://lightnow.ai/badge/io.github.adityasugandhi/skillsync-mcp)](https://lightnow.ai/servers/io.github.adityasugandhi/skillsync-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![MCP Compatible](https://img.shields.io/badge/MCP-Compatible-green.svg)](https://modelcontextprotocol.io)
 [![Node.js >= 20](https://img.shields.io/badge/Node.js-%3E%3D20-brightgreen.svg)](https://nodejs.org)
-[![Security Patterns](https://img.shields.io/badge/Threat_Patterns-60%2B-red.svg)](#security-model)
+[![Security Patterns](https://img.shields.io/badge/Regex_Threat_Patterns-101-red.svg)](#security-model)
 [![M8ven Score](https://m8ven.ai/badge/mcp/adityasugandhi-skillsync-mcp-k28u2v)](https://m8ven.ai/mcp/adityasugandhi-skillsync-mcp-k28u2v)
 
-**[Website](https://skillsync.js.org)** | **[Smithery](https://smithery.ai/servers/adityasugandhi/skillsync-mcp)** | **[npm](https://www.npmjs.com/package/@stranzwersweb2/skillsync-mcp)** | **[GitHub](https://github.com/adityasugandhi/skillsync-mcp)**
+**[Website](https://skillsync.js.org)** | **[npm](https://www.npmjs.com/package/@stranzwersweb2/skillsync-mcp)** | **[GitHub](https://github.com/adityasugandhi/skillsync-mcp)**
 
 An MCP (Model Context Protocol) server for [SkillsMP](https://skillsmp.com) -- the marketplace for Claude Code skills. Search, scan for security threats, install, and manage skills directly from your AI assistant.
 
-**The only tool that gates skill installation behind a full security scan.**
+**Every skill is scanned against 101 regex threat patterns before it installs; critical matches are blocked.** The scanner is rule-based (no machine-learning model ships in this package): it can miss novel or obfuscated attacks and can flag benign text.
+
+## Research (experimental, not shipped)
+
+> Experimental detector: 99.2% attack detection on Boundary Pairs synthetic test data, in each of three training runs (119/120 attacks each). Average benign false-alarm rate 3.9% (per-run 2.5%, 4.2%, 5.0%). 10 held-out scenarios from one synthetic generator; not evidence of real-world protection. Shipped rule-based scanner is separate.
+
+The detector is a fine-tuned DeBERTa-v3-base classifier. It is not part of the npm package and is not used by the install gate. Methods, results, baselines and negative results: [docs/research/](docs/research/) and [skillsync.js.org/research.html](https://skillsync.js.org/research.html).
 
 ## Features
 
-- **Search** -- Keyword and AI-powered semantic search across the SkillsMP marketplace
-- **Security Scan** -- 60+ threat patterns: prompt injection, reverse shells, credential theft, supply chain attacks, crypto mining, obfuscation
+- **Search** -- Keyword and semantic search across the SkillsMP marketplace (via the third-party SkillsMP API)
+- **Security Scan** -- 101 regex threat patterns in 19 categories: prompt injection, reverse shells, credential theft, supply chain attacks, crypto mining, obfuscation, and more
 - **Install** -- Download skills from GitHub to `~/.claude/skills/` with automatic security gate
 - **Uninstall** -- Clean removal of installed skills
 - **Safe Search** -- Combined search + auto-scan in one step
@@ -27,22 +33,26 @@ An MCP (Model Context Protocol) server for [SkillsMP](https://skillsmp.com) -- t
 
 ## Why SkillSync?
 
-| | Raw `git clone` | Other Tools | SkillSync MCP |
-|---|---|---|---|
-| Security scan before install | No | No | Yes -- 60+ patterns |
-| Blocks critical threats | No | No | Yes -- prompt injection, RCE, credential theft |
-| Multi-client support | N/A | Varies | Claude Code, OpenClaw, Cursor, Windsurf, GitHub Copilot, Zed, nanobot |
-| Marketplace search | Manual | Some | Built-in keyword + AI semantic search |
-| Startup verification | No | No | Yes -- fs.watch + content hash |
-| Output sanitization | No | No | Yes -- anti prompt injection |
+| | Raw `git clone` | SkillSync MCP |
+|---|---|---|
+| Security scan before install | No | Regex scan -- 101 patterns |
+| Blocks critical findings | No | Install blocked on a critical pattern match (e.g. prompt injection, RCE, credential theft) |
+| Multi-client support | N/A | Config docs for Claude Code, OpenClaw, Cursor, Windsurf, GitHub Copilot, Zed, nanobot |
+| Marketplace search | Manual | Keyword + semantic search via the SkillsMP API |
+| Startup verification | No | fs.watch + content hash |
+| Output sanitization | No | Strips hidden Unicode controls from third-party text |
+
+## Data Flow
+
+Search, suggestions and subscription sync send queries (and `SKILLSMP_API_KEY`, if set) to the SkillsMP API at `skillsmp.com`. Note that `skillsmp_suggest` builds its query from **the names of up to 10 of your installed skills**, plus the optional project `context` you pass (up to 200 characters), and sends that query to SkillsMP. Semantic search is provided by SkillsMP (it states it uses Cloudflare AI; the model is not disclosed). Skill source is fetched from `github.com` for scanning. Sync subscriptions live in a local config file; SkillSync has no cloud service of its own.
 
 ## Tools (13)
 
 | Tool | Description |
 |------|-------------|
 | `skillsmp_search` | Keyword search across SkillsMP marketplace |
-| `skillsmp_ai_search` | AI-powered semantic search (Cloudflare AI) |
-| `skillsmp_scan_skill` | Security scan a GitHub skill repo (60+ patterns) |
+| `skillsmp_ai_search` | Semantic search via the SkillsMP ai-search API (third-party) |
+| `skillsmp_scan_skill` | Security scan a GitHub skill repo (101 regex patterns) |
 | `skillsmp_search_safe` | Search + auto-scan top results |
 | `skillsmp_install_skill` | Scan then install to `~/.claude/skills/` |
 | `skillsmp_uninstall_skill` | Remove an installed skill |
@@ -59,12 +69,6 @@ An MCP (Model Context Protocol) server for [SkillsMP](https://skillsmp.com) -- t
 > Works with **Claude Code** | **OpenClaw** | **Cursor** | **Windsurf** | **GitHub Copilot** | **Zed** | **nanobot** -- any MCP-compatible client
 
 ## Install
-
-### Smithery (one-click)
-
-[![Smithery](https://smithery.ai/badge/adityasugandhi/skillsync-mcp)](https://smithery.ai/servers/adityasugandhi/skillsync-mcp)
-
-Install via [Smithery](https://smithery.ai/servers/adityasugandhi/skillsync-mcp) for automatic configuration with any supported client.
 
 ### Claude Code
 
@@ -89,10 +93,10 @@ Add to `~/.openclaw/mcp.json`:
 {
   "mcpServers": {
     "skillsmp": {
-      "version": "1.3.0",
+      "version": "1.4.1",
       "autoUpdate": false,
       "command": "npx",
-      "args": ["-y", "@stranzwersweb2/skillsync-mcp@1.3.0"]
+      "args": ["-y", "@stranzwersweb2/skillsync-mcp@1.4.1"]
     }
   }
 }
@@ -200,13 +204,13 @@ Then reference in any MCP config:
 
 ## Security Model
 
-Installation is gated by a multi-level security scan:
+Installation is gated by a rule-based, multi-level security scan: 101 regex patterns (47 critical, 3 critical multi-line, 51 warning) in 19 categories. See [docs/THREAT_PATTERNS.md](docs/THREAT_PATTERNS.md).
 
 | Risk Level | Behavior |
 |------------|----------|
 | **Safe / Low** | Install proceeds, warnings shown |
 | **Medium / High** | Install blocked -- requires `force: true` to override |
-| **Critical** | Install permanently blocked -- no override |
+| **Critical** | Install blocked -- no override |
 
 ### Additional Safety Guards
 
@@ -221,7 +225,7 @@ Installation is gated by a multi-level security scan:
 ## How It Works
 
 ```
-Search SkillsMP -> Pick a skill -> Security scan (60+ patterns)
+Search SkillsMP -> Pick a skill -> Security scan (101 regex patterns)
                                         |
                               Critical? -> BLOCKED
                               Medium/High? -> Requires force=true

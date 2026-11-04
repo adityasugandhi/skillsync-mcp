@@ -1,12 +1,12 @@
 # SkillSync MCP
 
-> Security-gated skill management for AI coding assistants. The only MCP server that gates skill installation behind a full security scan.
+> Security-gated skill management for AI coding assistants. Skills are scanned against 101 regex threat patterns before installation; critical matches are blocked.
 
 ## Overview
 
-SkillSync MCP (`@stranzwersweb2/skillsync-mcp`) is an open-source Model Context Protocol (MCP) server that provides security-gated skill management for Claude Code and 6 other MCP-compatible clients. It scans GitHub skill repositories for 60+ threat patterns across 15 categories before allowing installation, permanently blocking critical threats like prompt injection, reverse shells, credential theft, and supply chain attacks.
+SkillSync MCP (`@stranzwersweb2/skillsync-mcp`) is an open-source Model Context Protocol (MCP) server that provides security-gated skill management for Claude Code, with config docs for 6 other MCP clients. It scans GitHub skill repositories against 101 regex threat patterns in 19 categories (47 critical, 3 critical multi-line, 51 warning) before installation and blocks installs that match a critical pattern (for example prompt injection, reverse shells, credential theft, supply chain attacks). The scanner is a rule-based heuristic: it can miss novel or obfuscated attacks and can flag benign text. The shipped package contains no machine-learning model.
 
-- **Version**: 1.3.0
+- **Version**: 1.4.1
 - **License**: MIT
 - **Author**: Aditya Sugandhi
 - **npm**: https://www.npmjs.com/package/@stranzwersweb2/skillsync-mcp
@@ -36,12 +36,12 @@ Or add to Claude Code's `~/.claude/settings.json`:
 
 ### Search & Discovery
 - `skillsmp_search` — Keyword search across SkillsMP marketplace
-- `skillsmp_ai_search` — AI-powered semantic search via Cloudflare AI
+- `skillsmp_ai_search` — Semantic search via the third-party SkillsMP ai-search API (SkillsMP states it uses Cloudflare AI; model not disclosed)
 - `skillsmp_search_safe` — Search + auto-scan top results for security threats
 - `skillsmp_suggest` — AI-powered skill recommendations based on installed skills
 
 ### Security
-- `skillsmp_scan_skill` — Security scan a GitHub skill repo (60+ patterns, 15 categories)
+- `skillsmp_scan_skill` — Security scan a GitHub skill repo (101 regex patterns, 19 categories)
 - `skillsmp_compare` — Side-by-side security comparison of two skills
 - `skillsmp_audit_installed` — Deep security audit of a specific installed skill
 
@@ -50,26 +50,37 @@ Or add to Claude Code's `~/.claude/settings.json`:
 - `skillsmp_uninstall_skill` — Remove an installed skill
 - `skillsmp_list_installed` — List all installed skills with risk levels
 
-### Cloud Sync
+### Subscription Sync (local config; pulls from the SkillsMP API)
 - `skillsync_configure` — Manage sync subscriptions and settings
 - `skillsync_sync_now` — Run sync cycle (install/update/remove skills)
 - `skillsync_status` — Show sync engine status
 
-## Supported Clients (7)
+## Client Config Docs (7)
 
 Claude Code, OpenClaw, Cursor, Windsurf, GitHub Copilot, Zed, nanobot
 
 ## Security Model
 
-Every installation is gated by a multi-level security scan:
+Every installation is gated by a rule-based, multi-level security scan:
 
 - **Safe/Low risk**: Install proceeds with warnings
 - **Medium/High risk**: Blocked, requires force=true
-- **Critical risk**: Permanently blocked, no override
+- **Critical risk**: Blocked, no override
 
-### 15 Threat Categories Detected
+### 19 Threat Categories
 
-Prompt Injection, Unicode Homoglyphs, Destructive Shell, Remote Code Execution, Reverse Shells, Credential Theft, Supply Chain, Privilege Escalation, Exfiltration, Obfuscation, Code Execution, Shell Execution, Network, Crypto Mining, Dotfile Poisoning
+With critical (blocking) patterns: Prompt Injection (incl. Unicode homoglyphs), Destructive Shell, Remote Code Execution, Reverse Shells, Credential Theft, Supply Chain, Privilege Escalation, Exfiltration.
+Warning-only: Obfuscation, Code Execution, Shell Execution, Network, Crypto Mining, Dotfile Poisoning, Filesystem, Prototype Pollution, Time Bomb, Environment, Input Capture.
+
+## Data Flow
+
+Search, suggestions and sync send queries (and an API key if configured) to the SkillsMP API at skillsmp.com. skillsmp_suggest builds its query from the names of up to 10 installed skills plus the optional project context (up to 200 characters) and sends it to SkillsMP. Skill source is fetched from github.com for scanning. Sync subscriptions are stored in a local config file.
+
+## Research (experimental, not shipped)
+
+Experimental detector: 99.2% attack detection on Boundary Pairs synthetic test data, in each of three training runs (119/120 attacks each). Average benign false-alarm rate 3.9% (per-run 2.5%, 4.2%, 5.0%). 10 held-out scenarios from one synthetic generator; not evidence of real-world protection. Shipped rule-based scanner is separate.
+
+Details: https://skillsync.js.org/research.html
 
 ### Safety Guards
 
