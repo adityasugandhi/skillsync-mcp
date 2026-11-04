@@ -1,17 +1,17 @@
 # SkillSync MCP — Complete Reference
 
-> Security-gated skill management for AI coding assistants. The only MCP server that gates skill installation behind a full security scan.
+> Security-gated skill management for AI coding assistants. Skills are scanned against 101 regex threat patterns before installation; critical matches are blocked.
 
 ## What is SkillSync MCP?
 
-SkillSync MCP (`@stranzwersweb2/skillsync-mcp`) is an open-source Model Context Protocol (MCP) server that acts as a security gateway for installing skills (reusable prompt/tool packages) into AI coding assistants like Claude Code. It connects to the SkillsMP marketplace (skillsmp.com) and provides search, security scanning, installation, and cloud sync capabilities.
+SkillSync MCP (`@stranzwersweb2/skillsync-mcp`) is an open-source Model Context Protocol (MCP) server that acts as a security gateway for installing skills (reusable prompt/tool packages) into AI coding assistants like Claude Code. It connects to the SkillsMP marketplace (skillsmp.com) and provides search, security scanning, installation, and query-subscription sync.
 
-The key differentiator: SkillSync is the only tool that gates every skill installation behind a comprehensive security scan using 60+ threat detection patterns across 15 categories. Critical threats (prompt injection, reverse shells, credential theft, supply chain attacks) are permanently blocked with no override.
+Every skill installation is gated by a rule-based scan of 101 regex threat patterns in 19 categories (47 critical, 3 critical multi-line, 51 warning). Installs that match a critical pattern (for example prompt injection, reverse shells, credential theft, supply chain attacks) are blocked with no override. The scanner is a heuristic: it can miss novel or obfuscated attacks and can flag benign text. The shipped package contains no machine-learning model.
 
 ## Quick Facts
 
 - **Package**: @stranzwersweb2/skillsync-mcp
-- **Version**: 1.3.0
+- **Version**: 1.4.1
 - **License**: MIT (free and open source)
 - **Author**: Aditya Sugandhi (https://adityasugandhi.com)
 - **npm**: https://www.npmjs.com/package/@stranzwersweb2/skillsync-mcp
@@ -60,10 +60,10 @@ Add to `~/.openclaw/mcp.json`:
 {
   "mcpServers": {
     "skillsmp": {
-      "version": "1.3.0",
+      "version": "1.4.1",
       "autoUpdate": false,
       "command": "npx",
-      "args": ["-y", "@stranzwersweb2/skillsync-mcp@1.3.0"]
+      "args": ["-y", "@stranzwersweb2/skillsync-mcp@1.4.1"]
     }
   }
 }
@@ -166,7 +166,7 @@ Parameters:
 - sortBy (enum, optional): "stars" or "recent", default "recent"
 
 #### 2. skillsmp_ai_search — AI Semantic Search
-Natural language search powered by Cloudflare AI. Returns relevance-scored results. Finds skills even when keywords do not exactly match.
+Natural language search through the third-party SkillsMP ai-search API (SkillsMP states it uses Cloudflare AI; the model is not disclosed). Returns relevance-scored results, treated as untrusted content.
 
 Parameters:
 - query (string, required): Natural language search query, 1-200 chars
@@ -191,7 +191,7 @@ Parameters:
 ### Security
 
 #### 5. skillsmp_scan_skill — Security Scan
-Scans a GitHub skill repository for 60+ threat patterns across 15 categories. Returns a risk level (safe/low/medium/high/critical), threat list with line numbers, content hash, files scanned count, and recommendation.
+Scans a GitHub skill repository against 101 regex threat patterns in 19 categories. Returns a risk level (safe/low/medium/high/critical), threat list with line numbers, content hash, files scanned count, and recommendation.
 
 Parameters:
 - githubUrl (string, required): GitHub URL to scan
@@ -212,7 +212,7 @@ Parameters:
 ### Skill Management
 
 #### 8. skillsmp_install_skill — Install
-Scans a GitHub skill, then installs it to ~/.claude/skills/. Critical threats are permanently blocked. Medium/high risk requires force=true. Runs npm install with --ignore-scripts.
+Scans a GitHub skill, then installs it to ~/.claude/skills/. Installs matching a critical pattern are blocked. Medium/high risk requires force=true. Runs npm install with --ignore-scripts.
 
 Parameters:
 - githubUrl (string, required): GitHub URL
@@ -231,7 +231,7 @@ Lists all installed skills with risk levels, file counts, SKILL.md status, and l
 Parameters:
 - refresh (boolean, optional): Force re-sync before listing
 
-### Cloud Sync
+### Subscription Sync (local config; pulls from the SkillsMP API)
 
 #### 11. skillsync_configure — Configure Sync
 Manage sync subscriptions and settings. Add/remove search subscriptions, set sync interval (hours), risk threshold (safe/low/medium), and conflict policy (skip/overwrite/unmanage).
@@ -265,30 +265,34 @@ No parameters.
 |-------|----------|
 | Safe / Low | Install proceeds with warnings shown |
 | Medium / High | Blocked — requires force=true to override |
-| Critical | Permanently blocked — no override possible |
+| Critical | Blocked — no override possible |
 
-### 15 Threat Categories
+### 19 Threat Categories (101 patterns: 47 critical, 3 critical multi-line, 51 warning)
 
-**Critical (block installation):**
-1. Prompt Injection — override AI instructions, role reassignment, fake system prompts, LLM control tokens, hidden HTML instructions, zero-width Unicode
-2. Unicode Homoglyphs — Cyrillic/Greek/IPA/fullwidth characters mixed with ASCII for visual spoofing
-3. Destructive Shell — rm -rf /, chmod 777, mkfs, dd, fork bombs
-4. Remote Code Execution — curl/wget pipe to shell, secret exfiltration via curl
-5. Reverse Shells — bash /dev/tcp, netcat, ncat, socat, Python/PHP/Ruby/Perl one-liners
-6. Credential Theft — SSH keys, AWS creds, GPG keys, Kubernetes config, Docker config, .env files, wallet files, keychain
-7. Supply Chain — overwrite package.json, write to node_modules, modify CI/CD workflows, npm publish, npm registry redirect, git credential modification
-8. Privilege Escalation — sudo, write to /etc/ or /usr/, chown root
-9. Exfiltration — secret exfiltration via curl with environment variables
+**Categories with critical (install-blocking) patterns:**
+1. Prompt Injection — override AI instructions, role reassignment, fake system prompts, LLM control tokens, hidden HTML instructions, zero-width/bidi Unicode, Unicode homoglyphs (Cyrillic/Greek/IPA/fullwidth mixed with ASCII); also 3 warning-level patterns
+2. Destructive Shell — rm -rf /, chmod 777, mkfs, dd, fork bombs
+3. Remote Code Execution — curl/wget pipe to shell
+4. Reverse Shells — bash /dev/tcp, netcat, ncat, socat, Python/PHP/Ruby/Perl one-liners
+5. Credential Theft — SSH keys, AWS creds, GPG keys, Kubernetes config, Docker config, .env files, wallet files, keychain; also 3 warning-level patterns
+6. Supply Chain — overwrite package.json, write to node_modules, modify CI/CD workflows, npm publish, npm registry redirect, git credential modification
+7. Privilege Escalation — sudo, write to /etc/ or /usr/, chown root
+8. Exfiltration — secret exfiltration via curl with environment variables; also 3 warning-level patterns
 
-**Warning (flag for review):**
-10. Obfuscation — Base64/hex decoding, String.fromCharCode, shell base64 decode pipes
-11. Code Execution — eval(), new Function(), dynamic import/require, process.binding, VM module
-12. Shell Execution — child_process, execSync/spawnSync, exec with string args
-13. Network — fetch to external domains, axios, raw sockets, WebSocket, HTTP servers
-14. Crypto Mining — stratum pool connections, xmrig/cryptonight/coinhive/cpuminer
-15. Dotfile Poisoning — writing to .bashrc, .zshrc, .npmrc, .yarnrc, .gitconfig
+**Warning-only categories (flag for review):**
+9. Obfuscation — Base64/hex decoding, String.fromCharCode, shell base64 decode pipes
+10. Code Execution — eval(), new Function(), dynamic import/require, process.binding, VM module
+11. Shell Execution — child_process, execSync/spawnSync, exec with string args
+12. Network — fetch to external domains, axios, raw sockets, WebSocket, HTTP servers
+13. Crypto Mining — stratum pool connections, xmrig/cryptonight/coinhive/cpuminer
+14. Dotfile Poisoning — writing to .bashrc, .zshrc, .npmrc, .yarnrc, .gitconfig
+15. Filesystem — writes outside the project
+16. Prototype Pollution
+17. Time Bomb — date/time-triggered behaviour
+18. Environment — environment modification
+19. Input Capture — clipboard/keyboard capture
 
-Additional warning categories: DNS exfiltration, crypto wallet addresses, filesystem writes outside project, prototype pollution, time bombs, environment modification, clipboard/input capture.
+These are regex heuristics, not a guarantee: they can miss novel or obfuscated attacks and can flag benign text.
 
 ### Multi-line Pattern Detection
 
@@ -320,7 +324,7 @@ MCP Client (stdio) → tools.ts (13 tool handlers) → Business Logic → Respon
                                                      ├── security-scanner.ts (GitHub fetch + threat scan)
                                                      ├── skill-manager.ts (installed skill registry + fs.watch)
                                                      ├── installer.ts (filesystem + npm install)
-                                                     ├── sync-engine.ts (cloud sync orchestration)
+                                                     ├── sync-engine.ts (subscription sync orchestration)
                                                      └── sanitize.ts (output safety)
 ```
 
@@ -344,26 +348,36 @@ MCP Client (stdio) → tools.ts (13 tool handlers) → Business Logic → Respon
 | src/api-client.ts | SkillsMP marketplace REST API client |
 | src/security-scanner.ts | Core threat engine — GitHub fetch + pattern matching |
 | src/installer.ts | Skill install/uninstall — path validation, file writing |
-| src/patterns.ts | 60+ regex threat patterns (CRITICAL + WARNING) |
+| src/patterns.ts | 101 regex threat patterns (47 critical, 3 critical multi-line, 51 warning) |
 | src/constants.ts | Config: skills dir, file limits, extensions |
 | src/sanitize.ts | Anti prompt injection output cleaning |
-| src/sync-engine.ts | Cloud sync orchestration |
+| src/sync-engine.ts | Subscription sync orchestration (pulls from the SkillsMP API) |
 | src/sync-config.ts | Sync subscription management |
 | src/sync-lock.ts | Managed skill lock file |
 
 ---
 
-## Why SkillSync vs Alternatives
+## Why SkillSync vs a Raw Git Clone
 
-| Capability | Raw git clone | Other Tools | SkillSync MCP |
-|-----------|--------------|-------------|---------------|
-| Security scan before install | No | No | Yes — 60+ patterns |
-| Blocks critical threats | No | No | Yes — prompt injection, RCE, credential theft |
-| Multi-client support | N/A | Varies | 7 clients |
-| Marketplace search | Manual | Some | Keyword + AI semantic |
-| Cloud sync | No | No | Subscription-based sync |
-| Startup verification | No | No | fs.watch + content hash |
-| Output sanitization | No | No | Anti prompt injection |
+| Capability | Raw git clone | SkillSync MCP |
+|-----------|--------------|---------------|
+| Security scan before install | No | Regex scan — 101 patterns |
+| Blocks critical findings | No | Critical pattern match blocks install |
+| Multi-client support | N/A | Config docs for 7 clients |
+| Marketplace search | Manual | Keyword + semantic (SkillsMP API) |
+| Query subscriptions | No | Local config, pulls from SkillsMP |
+| Startup verification | No | fs.watch + content hash |
+| Output sanitization | No | Strips hidden Unicode controls |
+
+## Data Flow and Third Parties
+
+Search, suggestions and sync send queries (and an API key if configured) to the SkillsMP API at skillsmp.com. Skill source is fetched from github.com for scanning. Sync subscriptions are stored in a local config file; SkillSync has no cloud service of its own.
+
+## Research (experimental, not shipped)
+
+Experimental detector: 99.2% attack detection on Boundary Pairs synthetic test data, in each of three training runs (119/120 attacks each). Average benign false-alarm rate 3.9% (per-run 2.5%, 4.2%, 5.0%). 10 held-out scenarios from one synthetic generator; not evidence of real-world protection. Shipped rule-based scanner is separate.
+
+The detector is a fine-tuned DeBERTa-v3-base classifier; it is not in the npm package and is not used by the install gate. Methods, baselines, uncertainty and limits: https://skillsync.js.org/research.html and docs/research/ in the GitHub repository.
 
 ---
 
@@ -375,7 +389,7 @@ cd skillsync-mcp
 npm install
 npm run build
 npm run dev       # Watch mode
-npm run test:build  # Build + run tests (89 test cases)
+npm run test:build  # Build + run the node:test suite
 ```
 
 ## Contributing
