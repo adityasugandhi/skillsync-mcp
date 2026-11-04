@@ -39,7 +39,6 @@ An earlier research track used a small MiniLM-based model with verdict, span and
 
 - File hashes matched the repository's checksum manifest. No schema violations or missing fields.
 - No exact or normalised duplicate texts within or between train and validation. No pair or scenario overlap between train and validation. (The test split was checked separately, after training; see §6.)
-- All 13 attack families (12 pair families) appear in every split, so this is not an unseen-family test.
 - Length: the longest text is 150 tokens, so nothing is truncated at 512 tokens. Attack texts are slightly longer. Token-length AUROC was 0.578 (train) and 0.611 (validation), and a fixed length rule reached 0.62 balanced accuracy on validation.
 - Wording: many word pairs occur in only one class. A phrase list built from train alone classified about 85% of validation rows, with 100% accuracy on those rows. This is a strong template confound.
 - Source context (e.g. direct user, retrieved document, tool request) is balanced within every pair, so it carries no label signal. Half the rows are direct-user messages and only 12 are emails.
@@ -94,7 +93,8 @@ Two non-learned baselines were frozen before the test set was read:
 - The test file was fetched once, after all three runs, checkpoint verification and threshold freezing. Before any scoring, the hash was verified and these checks passed:
   - 240 rows (120/120) in 120 valid pairs;
   - 10 scenarios, with no scenario or pair overlap with train or validation;
-  - no exact duplicates.
+  - no exact duplicates;
+  - every attack family in the test split also appears in train, so this is not an unseen-family test.
 - Arms: P0, the three BP1 runs (also reported as a 3-run mean), and both baselines.
 - Primary metrics are attack detection (recall) and the benign false-alarm rate, reported together. Secondary metrics are per-family recall, per-scenario counts, and AUROC of the continuous scores.
 - Uncertainty comes from a paired bootstrap over the 10 test scenarios: 1,000 resamples, `numpy.random.default_rng(20261103)`, 95% percentile intervals.
