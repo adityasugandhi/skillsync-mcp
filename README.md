@@ -44,7 +44,7 @@ The detector is a fine-tuned DeBERTa-v3-base classifier. It is not part of the n
 
 ## Data Flow
 
-Search, suggestions and subscription sync send queries (and `SKILLSMP_API_KEY`, if set) to the SkillsMP API at `skillsmp.com`. Note that `skillsmp_suggest` builds its query from **the names of up to 10 of your installed skills**, plus the optional project `context` you pass (up to 200 characters), and sends that query to SkillsMP. Semantic search is provided by SkillsMP (it states it uses Cloudflare AI; the model is not disclosed). Skill source is fetched from `github.com` for scanning. Sync subscriptions live in a local config file; SkillSync has no cloud service of its own.
+Search, suggestions and subscription sync send queries (and `SKILLSMP_API_KEY`, if set) to the SkillsMP API at `skillsmp.com`. Note that `skillsmp_suggest` builds its query from **the names of up to 10 of your installed skills**, plus the optional project `context` you pass (up to 200 characters), and sends that query to SkillsMP. Semantic search is provided by SkillsMP (implemented in SkillSync; upstream availability not verified). Skill source is fetched from `github.com` for scanning. Sync subscriptions live in a local config file; SkillSync has no cloud service of its own.
 
 ## Tools (13)
 
@@ -70,9 +70,15 @@ Search, suggestions and subscription sync send queries (and `SKILLSMP_API_KEY`, 
 
 ## Install
 
+Node 20+ required. Setup guides below follow each client's current official documentation; they are docs-checked, not runtime-tested in every client. Only Claude Code loads installed skills natively; other clients get the SkillSync MCP tools.
+
 ### Claude Code
 
-Add to `~/.claude/settings.json`:
+```bash
+claude mcp add --transport stdio --scope user skillsmp -- npx -y @stranzwersweb2/skillsync-mcp
+```
+
+Or share it with a project via `.mcp.json` at the project root (Claude Code asks you to approve project servers):
 
 ```json
 {
@@ -85,28 +91,30 @@ Add to `~/.claude/settings.json`:
 }
 ```
 
+Check with `claude mcp get skillsmp` or `/mcp` inside Claude Code. Skills install to `~/.claude/skills/` and load in your next session.
+
 ### OpenClaw
 
-Add to `~/.openclaw/mcp.json`:
+Control UI → Settings → MCP → Add server → Stdio (command `npx`, args `-y @stranzwersweb2/skillsync-mcp@1.4.1`), or in the OpenClaw config:
 
 ```json
 {
-  "mcpServers": {
-    "skillsmp": {
-      "version": "1.4.1",
-      "autoUpdate": false,
-      "command": "npx",
-      "args": ["-y", "@stranzwersweb2/skillsync-mcp@1.4.1"]
+  "mcp": {
+    "servers": {
+      "skillsmp": {
+        "command": "npx",
+        "args": ["-y", "@stranzwersweb2/skillsync-mcp@1.4.1"]
+      }
     }
   }
 }
 ```
 
-> OpenClaw uses the same `SKILL.md` format as Claude Code. Skills installed via this server are compatible with both platforms. OpenClaw users should pin versions and review tool policies per the [security hardening guide](https://aimaker.substack.com/p/openclaw-security-hardening-guide).
+Check with `openclaw mcp doctor skillsmp --probe`. SkillSync still installs skills to `~/.claude/skills/`; OpenClaw gets the MCP tools.
 
 ### Cursor
 
-Add to `.cursor/mcp.json` in your project root:
+Add to `.cursor/mcp.json` (project) or `~/.cursor/mcp.json` (global), save, restart, then check Customize → MCPs:
 
 ```json
 {
@@ -121,12 +129,16 @@ Add to `.cursor/mcp.json` in your project root:
 
 ### Windsurf
 
-Add to `~/.windsurf/mcp.json`:
+In Cascade, open the MCP menu and open the MCP config file (`mcp_config.json`; legacy editor location `~/.codeium/windsurf/mcp_config.json`). Add the same `mcpServers` entry as Cursor, then refresh.
+
+### GitHub Copilot (VS Code)
+
+Add `.vscode/mcp.json` to your project, then start it with *MCP: List Servers* and use Copilot Chat in Agent mode:
 
 ```json
 {
-  "mcpServers": {
-    "skillsmp": {
+  "servers": {
+    "skillsync": {
       "command": "npx",
       "args": ["-y", "@stranzwersweb2/skillsync-mcp"]
     }
@@ -134,73 +146,57 @@ Add to `~/.windsurf/mcp.json`:
 }
 ```
 
-### GitHub Copilot
-
-Add to `.github/copilot-mcp.json` in your project root, or `~/.github/copilot-mcp.json` for global config:
-
-```json
-{
-  "mcpServers": {
-    "skillsync": {
-      "command": "npx",
-      "args": ["-y", "@stranzwersweb2/skillsync-mcp"],
-      "env": {
-        "SKILLSMP_API_KEY": "your-api-key"
-      }
-    }
-  }
-}
-```
-
 ### Zed
 
-Add to `~/.config/zed/settings.json` under the `"context_servers"` key:
+Settings → AI → MCP Servers → Add Local Server, or in `~/.config/zed/settings.json` (optional `"env"` sits next to `"args"`):
 
 ```json
 {
   "context_servers": {
     "skillsync": {
-      "command": {
-        "path": "npx",
-        "args": ["-y", "@stranzwersweb2/skillsync-mcp"],
-        "env": {
-          "SKILLSMP_API_KEY": "your-api-key"
-        }
+      "command": "npx",
+      "args": ["-y", "@stranzwersweb2/skillsync-mcp"]
+    }
+  }
+}
+```
+
+### nanobot
+
+Add to `~/.nanobot/config.json` (or Apps → MCP → custom stdio server), restart when prompted:
+
+```json
+{
+  "tools": {
+    "mcpServers": {
+      "skillsync": {
+        "command": "npx",
+        "args": ["-y", "@stranzwersweb2/skillsync-mcp"]
       }
     }
   }
 }
 ```
 
-### Global install
+### Global npm install (optional)
 
 ```bash
 npm install -g @stranzwersweb2/skillsync-mcp
 ```
 
-Then reference in any MCP config:
-
-```json
-{
-  "mcpServers": {
-    "skillsmp": {
-      "command": "skillsync-mcp"
-    }
-  }
-}
-```
+Then use `skillsync-mcp` (no args) as the command in any config above instead of `npx`.
 
 ### Client Compatibility
 
-| Client | Config Path | Skill Format |
-|--------|------------|--------------|
-| Claude Code | `~/.claude/settings.json` | `SKILL.md` in `~/.claude/skills/` |
-| OpenClaw | `~/.openclaw/mcp.json` | `SKILL.md` (same format, ClawHub registry) |
-| Cursor | `.cursor/mcp.json` | MCP tools only |
-| Windsurf | `~/.windsurf/mcp.json` | MCP tools only |
-| GitHub Copilot | `.github/copilot-mcp.json` | MCP tools only |
-| Zed | `~/.config/zed/settings.json` | MCP tools only |
-| nanobot | MCP config | MCP tools only |
+| Client | Where to configure | What you get |
+|--------|--------------------|--------------|
+| Claude Code | `claude mcp add` (user) or `.mcp.json` (project) | MCP tools + native skill loading from `~/.claude/skills/` |
+| OpenClaw | Control UI → MCP, or `mcp.servers` in config | MCP tools |
+| Cursor | `.cursor/mcp.json` or `~/.cursor/mcp.json` | MCP tools |
+| Windsurf | Cascade MCP menu → `mcp_config.json` | MCP tools |
+| GitHub Copilot (VS Code) | `.vscode/mcp.json` (`servers`) | MCP tools |
+| Zed | `context_servers` in `~/.config/zed/settings.json` | MCP tools |
+| nanobot | `tools.mcpServers` in `~/.nanobot/config.json` | MCP tools |
 
 ## Security Model
 

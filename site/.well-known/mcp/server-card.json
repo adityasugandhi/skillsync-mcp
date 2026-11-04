@@ -23,7 +23,7 @@
     },
     {
       "name": "skillsmp_ai_search",
-      "description": "Semantic search via the third-party SkillsMP ai-search API (SkillsMP states it uses Cloudflare AI). Results are untrusted third-party content.",
+      "description": "Semantic search via the third-party SkillsMP ai-search API (implemented; upstream availability not verified). Results are untrusted third-party content.",
       "inputSchema": {
         "type": "object",
         "properties": {
